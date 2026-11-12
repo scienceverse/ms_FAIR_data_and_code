@@ -4,3 +4,7 @@
 .Ruserdata
 .DS_Data
 .Renviron
+.DS_Store
+
+/.quarto/
+**/*.quarto_ipynb

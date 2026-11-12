@@ -1,9 +1,6 @@
 ---
-title: "Best Practices for Machine Readable Data and Code Sharing in Psychology"
-shorttitle: "Machine Readable FAIR data and code"
-# CREDIT roles: Conceptualization, Data curation, Formal analysis, Funding acquisition, 
-# Investigation, Methodology, Validation, Visualization, Writing – original draft, 
-# Writing – review & editing
+title: "Best Practices for Machine-Readable Data and Code Sharing in Psychology"
+shorttitle: "Machine-Readable FAIR Data and Code"
 author:
   - name: Daniël Lakens
     corresponding: true
@@ -34,12 +31,12 @@ author:
     affiliations:
       - name: University of Glasgow
         department: Institute of Neuroscience and Psychology
-abstract: "The FAIR principles state that research materials should be Findable, Accessible, Interoperable, and Reusable [@wilkinson_fair_2016]. Best practices for FAIR data and code involve the creation of consistently structured repositories and standardised, machine-readable meta-data, but adhering to these best practices is a complex and effortful task. Here we describe a variety of best practices and existing standards, and introduce software that can facilitate these practices."
+abstract: "The FAIR principles state that research materials should be Findable, Accessible, Interoperable, and Reusable [@wilkinson_fair_2016]. Adhering to these principles requires data and code to be organised in consistently structured repositories and accompanied by standardised, machine-readable metadata. However, implementing these principles can be complex and effortful. Previous literature has disussed how to make research materials FAIR, with particular focus on data and metadata. Here, we first describe best practices and existing standards for repository organisation, content, and file naming. We then demonstrate how researchers can use Metacheck to identify issues that hinder the FAIRness and machine-readability of repositories and their contents."
 keywords: [FAIR, Data sharing, Reproducibility, Open Science]
 author-note:
   disclosures:
     conflict-of-interest: "The authors have no conflict of interest to declare."
-    data-sharing: "A reproducible version of this manuscript available at on GitHub  (https://github.com/scienceverse/machine_readable_FAIR_data_and_code)."
+    data-sharing: "A reproducible version of this manuscript available at on GitHub (https://github.com/scienceverse/machine_readable_FAIR_data_and_code)."
     financial-support: "This work was funded with the support of the  Netherlands Organization for Scientific Research (NWO Vici grant VI.C.241.013)."
 bibliography: fair_data_code.bib  
 floatsintext: true
@@ -58,148 +55,121 @@ This was in the abstract, is maybe notes?
 Distinguish necessary from optional metadata. How do codebooks deal with units? Variable types 
 -->
 ```
+```{r}
+#| echo: false
+#| message: false
 
-<!--
-These two citations need to be added to the bib file:
-[WARNING] Citeproc: citation ROCrate2022 not found
-[WARNING] Citeproc: citation comprepro_2026 not found
--->
+# Load packages
+library("metacheck")
+library("tidyverse")
+library("metacheck")
+library("flextable")
+```
 
-Access to the data and code that underlie findings in the scientific literature allows peers to scrutinize the evidential basis for empirical claims, and to increase the efficiency of knowledge generation through re-use. The [European Code of Conduct for Research Integrity](https://ec.europa.eu/info/funding-tenders/opportunities/docs/2021-2027/horizon/guidance/european-code-of-conduct-for-research-integrity_horizon_en.pdf) states: "Researchers, research institutions, and organisations ensure that access to data is as open as possible, as closed as necessary, and where appropriate in line with the FAIR Principles (Findable, Accessible, Interoperable and Reusable) for data management." Similarly, the [Dutch Code of Conduct for Research Integrity](https://www.nwo.nl/sites/nwo/files/documents/Netherlands%2BCode%2Bof%2BConduct%2Bfor%2BResearch%2BIntegrity_2018_UK.pdf) states that: "Ensure that, in accordance with the FAIR principles, data is open and accessible to the extent possible and remains confidential to the extent necessary." Accordingly, research materials should be managed in accordance with the FAIR Principles [@wilkinson_fair_2016].
 
-The FAIR Principles were explicitly developed with both human and machine users in mind. Although it is important that individual can find, access, and re-use data, the benefits of FAIR data and code can only be realised when scientific resources are also accessible and processable by machines. Therefore, research data and code should be shared in machine-readable formats [e.g., see @lakens_improving_2021 for an example of the benefits of machine-readable hypothesis]. Machine-readable FAIR data and code will make it possible to retrieve and integrate data into large, searchable databases, and facilitate the automation of tasks, such as checking data and code for adherence to best research practices. This guide summarises best practices for sharing data and code in ways that make them findable, accessible, interoperable, and reusable by both humans and machines.
+Access to the data and code that underlie findings in the scientific literature allows peers to scrutinize the evidential basis for empirical claims, and to increase the efficiency of knowledge generation through re-use. The [European Code of Conduct for Research Integrity](https://ec.europa.eu/info/funding-tenders/opportunities/docs/2021-2027/horizon/guidance/european-code-of-conduct-for-research-integrity_horizon_en.pdf) states: "Researchers, research institutions, and organisations ensure that access to data is as open as possible, as closed as necessary, and where appropriate in line with the FAIR Principles (Findable, Accessible, Interoperable and Reusable) for data management." [@allea_code_2023]. Similarly, the [Dutch Code of Conduct for Research Integrity](https://d2y7tnbi225lw.cloudfront.net/2026-10/20261020-KNAW-NGWI-2027-EN-def.pdf) states that: "Ensure that data, software, and research materials are as open and accessible as possible in accordance with the FAIR principles." [@netherlands_code_2026]. Accordingly, research materials should be managed in accordance with the FAIR Principles [@wilkinson_fair_2016]. Meeting these standards requires repositories to preserve the information needed to locate, understand, and use the deposited research outputs. To this purpose, Data Management Plans (DMPs) help researchers specify how data will be managed, documented, preserved, and shared throughout a project [@michener2015ten; @miksa2019ten]. Our recommendations complement this planning by providing practical guidance on how to chose a repository and how to organize and document the different types of files within a research repository to support implementation of the FAIR principles. 
 
-A machine can only find data and code reliably and automatically if they have a stable digital identifier and metadata; can be accessed through standardized protocols (e.g., HTTPS or an Application Programming Interface (API)); are provided in formats that can be used by other software (e.g., non-proprietary formats accompanied by metadata describing how files should be read in); and are re-usable (e.g., by providing a codebook and a license).
+Following a data management plan, making research files available and including an appropriate license does not, by itself, ensure that others will be able to use them. In psychology, @hardwicke_analytic_2021 examined 25 articles awarded open-data badges between 2014 and 2016 and reproduced the target results. For 64% of the articles there were numerical discrepancies when trying to reproduce the results, after contacting the authors 37 out of 789 checked values remained unmatched. The principal obstacle was the unclear reporting of analytical procedures. Later, @trisovic_large_2022 examined more than 9,000 R files from replication datasets deposited in Harvard Dataverse and 74% failed to compile without errors during initial execution. They also report how it is essential to use descriptive file naming, and found that about one third of the files (32%) contained a space in the name, a highly discouraged practice. These studies show how code and data sharing is not enough to guarantee reuse. Such barriers prevent the ability to properly inspect materials, adapt code, or reuse the data for a new research question.
+
+The FAIR Principles provide a framework for improving the Findability, Accessibility, Interoperability, and Reusability of research outputs by both people and machines [@wilkinson_fair_2016]. Their emphasis extends beyond whether software can read a file: automated systems also need information about what a resource contains, how it relates to other resources, and under which conditions it can be used. Those Principles were explicitly developed with both human and machine users in mind. Although it is important that individual can find, access, and re-use data, the benefits of FAIR data and code can only be realised when scientific resources are also accessible and processable by machines. Therefore, research data and code should be shared in machine-readable formats [e.g., see @lakens_improving_2021 for an example of the benefits of machine-readable hypothesis]. Machine-readable FAIR data and code will make it possible to retrieve and integrate data into large, searchable databases, and facilitate the automation of tasks, such as checking data and code for adherence to best research practices. Applying FAIR to research software introduces additional considerations, including software versions, dependencies, and the relationships among software components. These considerations motivated the development of the FAIR Principles for Research Software, or FAIR4RS [@lamprecht_towards_2020; @chuehong_fair4rs_2022; @barker_introducing_2022]. This guide summarises best practices for sharing data and code in ways that make them findable, accessible, interoperable, and reusable by both humans and machines.
+
+A machine can only find data and code reliably and automatically if they have a stable digital identifier and metadata. Metadata are structured information that describe other data or files, providing details such as their content, structure, format, origin, and how they should be interpreted. In addition, data and code should be accessisable through standardized protocols (e.g., HTTPS or an Application Programming Interface (API)); provided in formats that can be used by other software (e.g., non-proprietary formats accompanied by metadata describing how files should be read in); and re-usable (e.g., by providing a codebook and a license).
 
 When data and code are shared this way, an automated computational system can identify what files contain — including both their format and purpose — based on metadata or filenames; determine whether they can be accessed and reused, for example given the license or privacy regulations; and process the data and code accordingly. Ideally, each of these steps should be unambiguous and deterministic, minimizing the need for probabilistic inference by machine-learning algorithms or large language models. This guide is intended for researchers and data managers. It discusses best research practices for making data and code machine-readable and FAIR, including where to share data and code, repository organization, file naming, file formats, codebooks, README and requirement files, data layout, column naming, codebook generation, specification of scales and measures and adherence to existing schemas and standards.
 
-## Practices
+Existing recommendations address different aspects of research sharing. Some focus preparing and documenting code for reuse[@eglen_toward_2017; @abdill_guide_2024], while others address the organisation of data and code, emphasising structured files, informative metadata, reusable formats, and explicit licences[@jenkins_reproducibility_2023]. More recently, TADA has proposed minimum requirements for sharing functional analytical code [@ivimeycook_tada_2025], and the SORTEE guidelines have established a staged framework for assessing archived data and code, from their availability and documentation to their correspondence with a manuscript and computational reproducibility [@pick_sortee_2026]. 
 
-### 1 Repository Choice
+The proposed work brings these recommendations together at the level of a complete research repository in psychology. A repository may contain data and code, codebooks, scripts, questionnaires, stimuli, generated outputs, and supporting documentation. Reusing these resources requires their purposes and relationships to be clear: which codebook describes a dataset, which script produces an output, which materials belong to a particular study, and which licence applies to each resource. A standardised repository structure, supported by explicit and consistent metadata, can make these relationships easier to establish without requiring users to reconstruct them from the manuscript or contact the original authors.
 
-There are many data repositories, each with different strengths and limitations. When choosing a data repository, consider whether it allows you to share anonymized versions of the repository and specific files, or control who can access your data. You should also consider whether the repository provides persistent identifiers (e.g., DOIs), stable and unchangeable versions, version control and appropriate metadata. Other considerations include compatibility with regulations such as the General Data Protection Regulation (GDPR), funder requirements, and any limitations on the types or quantities of data that can be archived.
+This guide synthesises existing standards and practical recommendations into actionable guidance organised around repository structure, contents and file types. It covers repository selection, folder structure and naming conventions, data formats and codebooks, code, outputs, research materials, licences, and approaches to assessing FAIRness. Its emphasis on machine-readable descriptions builds on broader efforts to make research outputs easier to discover and reuse automatically[@lakens_improving_2021]. Ultimately, this work aims to support the creation of repositories in which peers and software can identify the available resources, understand how they relate to one another, retrieve relevant files, and determine the conditions for their reuse.
 
-Some repositories commonly used in psychology include Zenodo, GitHub, the Open Science Framework, ResearchBox, Figshare, and PsyArchives. In addition, countries and universities may provide dedicated research data repositories, such as the UK Data Service or DataverseNL. GitHub is primarily a platform for developing and collaborating on code rather than a data repository and does not provide stable identifiers. However, published releases can be archived through Zenodo, which assigns a DOI and preserves specific versions of a repository. Once a project is published on Zenodo, its files and and persistent identifier cannot be modified, and subsequent changes are represented as new versions.
+## 1 Repository Choice
 
-The suitability of a repository also depends on whether it supports machine access. for example, repositories that provide public APIs allow automated systems to retrieve metadata and files without relying on manual interaction with a web interface. For example, ResearchBox and PsychArchives currently do not have a public API, which makes it difficult for a machine to access files. Similarly, repositories that support anonymous or restricted-access sharing can be particularly useful during peer review, which can easily be done on PsychArchives, Dataverse, ResearchBox, and the Open Science Framework, and with some effort on Zenodo and GitHub. For sharing anonymised data and research materials, Zenodo is often a suitable choice. It provides persistent DOIs, versioning and options for restricting access to files when necessary, including for materials under review or data that cannot be made publicly available. However, Zenodo should not be used to share identifiable or sensitive personal data simply because it can be restricted. Zenodo is hosted by CERN, an intergovernmental organization that is not subject to the European General Data Protection Regulations, which makes it a less appropriate choice for pseudo-anonymized data.
+There are many data repositories, each with different strengths and limitations. When choosing a repository, several features are worth considering. These include whether it allows repositories or files to be shared anonimously, whether access to data can be restricted to specific users, and whether it provides persistent identifiers (e.g., DOIs), stable versions, version control, appropriate metadata, and programmatic access. Other important considerations include compatibility with relevant regulations, such as the General Data Protection Regulation (GDPR), compliance with funder requirements, and restrictions on the types or quantities of data that can be archived.
 
-When choosing a data repository, therefore, do not simply ask whether it allows you to upload your files. Consider whether its infrastructure support the level of openness, persistence, accessibility, and machine readability required for your research materials to adhere to FAIR principles.
+Curated registries, such as re3data [@pampel2023] and [OpenDOAR](https://opendoar.ac.uk/), can help researchers identify suitable repositories based on specific characteristics. This section discusses a selection of crepositories commonly used in psychology, including Zenodo, GitHub, the Open Science Framework, ResearchBox, Figshare, and PsychArchives. Researchers may also have access to dedicated research data repositories provided by they country or university, such as the UK Data Service or DataverseNL. 
 
-```{=html}
-<!--
-I think we should add the source regarding CERN data privacy framework mentioned above.
+It is important to distinguish between platforms designed primarly for code development and collaboration and those intended for archiving research outputs. GitHub is primarily a platform for developing and collaborating on code rather than a data repository. However, public GitHub releases can be archived through Zenodo, which assigns a DOI to each release and preserves a citable snapshot of the repository. Zenodo also provides a concept DOI that resolves to the record containing all versions, alongside a version-specific DOI for each release.
 
-Also, is it up to date? I foud this from February 2026:
-https://home.cern/revision-oc-11-modernised-data-privacy-framework-cern/
-"The revised OC 11 aligns CERN’s rules more closely with recognized international best practices in data protection, including the EU General Data Protection Regulation (GDPR), [...]
+@tbl-repository-choice provides a brief comparison of repositories commonly used in psychology and related social sciences. The table is intended as an overview rather than a ranking, as the features of institutional services based on platforms such as Dataverse or Figshare may differ from those of their general-purpose counterparts. Repository features and policies may also change over time, so researchers should consult the current terms and technical documentation of the specific service before depositing data. The comparison is based on dimensions discussed in a recent overview of repository choice, including persistence, machine access, metadata, sharing for peer review, usability, and data protection.
 
-Not sure what the implications are, it includes lots of jargon.
---->
+```{r}
+#| echo: false
+#| tbl-cap: "Comparison of selected research repositories"
+#| label: tbl-repository-choice
+
+repository_table <- tibble::tribble(
+  ~Repository, ~`Main advantages`, ~`Limitations and points to check`,
+  "Zenodo",
+  "DOIs, versioning, API access, and options to restrict access to files.",
+  "No folder hierarchy. Metadata remain publicly accessible even when files are restricted. Changes to published files require a new version.",
+
+  "GitHub",
+  "Code development and collaboration, version history, releases, and API access. Public releases can be archived through Zenodo and assigned a DOI.",
+  "Primarily designed for code development and collaboration rather than long-term data archiving. Zenodo DOI integration requires a public repository.",
+
+  "Open Science Framework (OSF)",
+  "Project collaboration and view-only links for sharing materials during peer review.",
+  "No new projects or components from November 16, 2026; existing projects become read-only on February 19, 2027.",
+
+  "ResearchBox",
+  "Search functionality for data and code, automatically generated codebooks, and a documented API.",
+  "Check whether its preservation arrangements, access options, and file-size limits meet the project's requirements. (API)",
+
+  "Figshare",
+  "DOIs, versioning, API, and support for a wide range of research outputs.",
+  "Storage limits and available features may differ between Figshare.com and institutional Figshare services.",
+
+  "PsychArchives",
+  "Psychology-focused repository that links related research outputs and provides anonymized reviewer links.",
+  "Primarily intended for psychology and related disciplines. Datasets must be anonymized. The standard file-size limit is 1 GB, although larger deposits can be requested. Check API documentation and options for automated access to restricted files.",
+
+  "DataverseNL",
+  "Dataset DOIs, versioning, metadata, access management, and API-based upload.",
+  "Institutional policies and available support may differ.",
+
+  "UK Data Service ReShare",
+  "Social-science repository with review of deposits and open or safeguarded access.",
+  "Deposits must meet the UK Data Service's scope and policies. Access to safeguarded files may require registration or permission."
+)
+
+repository_table |> 
+  flextable() |> 
+  theme_booktabs() |> 
+  width(j = "Repository", width = 1.3) |> 
+  width(j = "Main advantages", width = 2.3) |> 
+  width(j = "Limitations and points to check", width = 3.0) 
 ```
 
-### 2 Which Files to Share
+The suitability of a repository also depends on whether it supports machine access. Public APIs allow automated systems to retrieve metadata and files without relying on manual interaction with a web interface. ResearchBox now provides a documented API; PsychArchives has an API, although its documentation and programmatic access to some restricted files remain limitations. These features should be checked against the intended use of the shared materials.
 
-Data repositories might contain files that researchers share to facilitate *replication* such as study materials, stimuli, questionnaires, and experimental procedures, as well as files that facilitate *reuse*, such as data and code to reproduce results or conduct new analyses. Both types of files should be shared, but they serve different purposes and may require different purposes to sharing. Study materials vary considerably across studies and are rarely processed by a machine. Data and code, in contrasts, contain structured information that other researchers and computational systems might want to access and process directly - for example, to enable living meta-analyses, or to search for recent studies that have used a particular questionnaire.
+Repositories that support anonymous or restricted-access sharing can be particularly useful during peer review. Anonymous links are available through PsychArchives, Dataverse, ResearchBox, and OSF; Zenodo and GitHub can also be used for review sharing, although this may take additional steps. Researchers should check what information a reviewer link exposes and whether the files themselves have been checked for identifying information.
 
-Where possible, researchers should share raw data, meaning the data in the form in which it were originally generated or collected. Examples include exported Qualtrics files, audio recordings, or individual-participant EEG data. Raw data provide an important record of the original observations and allow subsequent users to understand, and reproduce the data processing steps that were applied to the raw data.
+For sharing anonymized data and research materials, Zenodo may be a suitable choice because it provides persistent DOIs, versioning, and options for restricting file access when necessary, including for materials under review or data that cannot be made publicly available. However, restricted access alone does not establish that a repository is appropriate for identifiable or sensitive personal data. Researchers should check applicable institutional, ethical, and data-protection requirements, particularly for pseudonymized data, before depositing it.
 
-Sharing raw data is not always possible or appropriate. For example, the raw data might not have been collected in a digital format, may contain information that cannot be adequately anonymised, or may be subject to ethical or legal restrictions. In such cases, researchers should share the earliest digital representation that can be made available, such as scanned surveys, or anonymized transcripts. When data require processing before they can be analysed or shared — for example, when personally identifying columns must be removed or unstructured data must be converted to a tabular format — researchers should use code to perform these transformations whenever possible. The resulting minimally processed data should be shared along the code to them. The README file should explain how the processed data was created from the raw data and identify any transformations that were applied.
+When choosing a data repository, therefore, do not simply ask whether it allows you to upload your files. Consider whether its infrastructure supports the level of openness, persistence, accessibility, and machine readability required for the research materials to adhere to FAIR principles.
 
-Using code rather than manually editing the raw data has two important advantages. First, it creates an auditable record of how the data were transformed, allowing others to inspect the processing workflow for potential errors. Second, it males the transformation reproducible: the same code can be rerun if errors are identified, the processing needs to be updated, or a new version of the data needs to be generated. Manual alterations to the raw data should therefore be avoided, and any unavoidable manual processing should be otherwise documented.
+## 2 Repository content and organization
 
-```{=html}
-<!--
-General comment: I think I would I would add subheaders to each section.
---->
-```
+Repositories should contain not only data but also materials that support *replication* and *reuse*. These may include code used to process data or run analyses, and study materials such as stimuli, questionnaires, and other experimental materials. These file types serve different purposes and may be reused in different ways. Study materials vary across projects and are not always machine-processable, whereas data and code often contain structured information that people and software can access and process. This can support activities such as living meta-analyses or searches for studies that used a particular questionnaire. Repository metadata describe the project and its files, while codebooks explain variables and values in data files; both support interpretation and reuse.
 
-```{=html}
-<!--
-Output and documentation
---->
-```
+### 2.1 Overall structure and file/folder naming conventions
 
-In addition to data, and code, researchers may want to share output files, including the results of statistical analyses, tables, and figures. Ideally, these output files are computationally reproducible from the shared data and code. Nevertheless, it can be useful to share outputs even when they are fully reproducible, particularly when reproducing them requires substantial computational time or resources, such as the results of simulations. Researchers may also want to share documentation, including codebooks, preregistration documents, the manuscript, supplementary materials, and metadata files such as README files. These files provide important context for interpreting and reusing the data and code and should be clearly identified in the repository.
+Naming conventions are not universal, so folder structures and names vary across projects and research fields. A few shared principles can nevertheless make repositories easier for people to navigate and for software to process.
 
-```{=html}
-<!-- 
-I wonder if we should also say something about how researchers should store the results of their analyses, unless they use a workflow such as Quarto where results are directly embedded in the rendered document. For example, rather than having an .R file that only produces results in the console, researchers could store key analytical results in objects and save them in a machine-readable format (e.g., .rds). Also, if an .R file contains many different analyses, should we recommend storing the results of each statistical analysis in a separate file? Perhaps this is worth discussing a bit.
--->
-```
+#### 2.1.1 Folder structure
 
-```{=html}
-<!--
-File size and selective download
---->
-```
+Folders should group related files. A research repository can include folders named `data`, `code`, `output`, `materials`, and `documentation`, with an `other` folder for files that do not fit these categories. The top-level folder corresponds to the paper and contains files that apply to the repository as a whole. A README is one example: it describes the repository contents and gives instructions for reuse in a human-readable form.
 
-Online data repositories often provide generous storage limits. For example, Zenodo currently allows up to 50GB per record, with a maximum of 100 files. Large files can create challenges for (automated) reuse. Users may not have sufficient disk space or time to download files that are not relevant to their intended use. Downloading and unzipping a 10 GB archive, for example, requires substantially more resources than downloading 1 MB file. Repositories should therefore be kept as small as possible, and files should be organised and labelled so that they can be downloaded selectively. This is particularly important for automated tools, which may impose limits on the size of files or repositories they are able to process. When a repository size exceeds these limits, an automated tool may need to prioritize certain files, download only a subset of the data, or retrieve only certain files. For example, an automated tool intended to reproduce analyses reported in a manuscript may need to download the analysis dataset and code while ignoring large stimulus files such as videos.
+Psych-DS, a data structure for social science research, recommends a subfolder for each project in which data were collected. For a multi-study paper, this means creating a folder for each study (e.g., `pilot-classification`, `study-mood-classification`, and `study-moderator-effect-mood`). Choose clear, consistent study labels early, for example when preparing an ethics application or preregistration. Because studies may be reported in a different order from the order in which they were conducted, and numbers alone do not describe a study, avoid naming folders only `study-1`, `study-2`, and so on. Short descriptive labels help connect repository files to the corresponding study in the manuscript. Once the order of studies in the paper is settled, numbers can be added to the folder names (e.g., `01-pilot-classification`, `02-study-mood-classification`).
 
-```{=html}
-<!--
-Compression of large files
---->
-```
+At a minimum, each study folder should contain a `data` folder, and each data file should be accompanied by a codebook.
 
-Compression can substantially reduce the size of large data files. For large CSV files, gzip (.gz) compression is particularly useful because compressed CSV files can still be read directly without first being decompressed. We recommend using gzip compression for CSV files larger than approximately 10 MB to substantially reduce the size of the repository. For collection of multiple files, a .zip archive can be useful. ZIP archives contains the end central directory that records information about the files they contain, including the name and size of each file. Because this directory is located near the end of the archive (within the last 128 KB), software can use HTTP range retrieve it without downloading the entire archive. This makes it possible to determine whether a .zip archive contains files that are relevant to their intended use before downloading the archive in full. ZIP should therefore be preferred as archive format. Proprietary archive formats such as .rar should be avoided because they are less suitable for interoperable use.
+When data are analysed using individual code files, place them in a `code` folder. A study folder may also contain an `output` folder for results generated by analysis scripts. Repositories may include a `documentation` folder for files such as the preregistration and manuscript, and a `materials` folder for stimuli, survey files, and other study materials.
 
-```{=html}
-<!--
-Labelling of files
---->
-```
+Software may search for these folders using a limited set of aliases. For example, a documentation folder might be called `reports` or `docs`, and a materials folder might be called `assets` or `stimuli`. If the range of names is limited, software can use a predefined list to identify folders containing particular types of files. This reduces reliance on large language models, which are less reliable and more computationally expensive than rule-based classification for this task.
 
-Clearly label files to facilitate selective downloads. If a user wants to reproduce the data analysis, and a repository contains 14 GB of video files used as stimuli, they should be able to download only the data and code files needed for the analysis. This prevents the waste of time, computational resources and storage. Software that automatically downloads the files from research repositories will similarly need to impose limits on the size of individual files and entire repositories. For example, a tool that allows peer reviewers to automatically check whether reported results can be reproduced from the shared data and code may only be able to download files that fit within the available storage the peer reviewer has available. The practice of clearly labeling files in repositories is also important to distinguish links to repositories that contain existing software used in research (e.g., a GitHub link to a software tool created by others that was used to process physiological data) from links to repositories that contain code generated by the researchers themselves for their research (e.g., code for an agent-based model that researchers have created as part of their research).
-
-```{=html}
-<!--
-I find the last part of the paragraph a bit confusing. The paragraph is about the importance of clearly labelling files, but the last part mentions links to GitHub repositories. Do you mean that, when a repository contains both code generated for the study and software or code developed by others, the filenames should make this distinction clear?
-Otherwise, it feels like the last part is more relevant to software/data provenance.
--->
-```
-
-Some files can be completely reproduced from other files in a repository. For example, code for simulations might generate a large CSV file containing the results of hundreds of thousands of simulations. Labeling such files as 'output' will make it possible to download them only when needed. Because long-term storage of output files comes at cost, outputs should generally only be stored when they substantially reduce computational burden of reproduction or facilitate verification of the reported results. Computational reproducibility refers to the ability to produce the same outputs from the same data and code inputs [@comprepro_2026]. Computational reproducibility is often threatened by different versions of software, packages or computational settings. To increase computational reproducibility, the software and dependencies required to run the analysis should be clearly specified. For example, R projects can include an renv.lock file and Python projects a requirements.txt or environment.yml file. For analyses that depend on system libraries or software beyond R or Python packages, containerized solutions such as Docker, Nix, or Code Ocean provide stronger guarantees that the computational environment can be reconstructed in the future.
-
-```{=html}
-<!-- 
-I think I would move up the first part of the paragraph above, which discusses outputs, up to the section on Labelling files. I think it would make more sense to keep the discussion of files and folders together. 
--->
-```
-
-```{=html}
-<!-- 
-"Labeling such files as 'output' will make it possible to download them only when needed." We already recommend using an output folder for all output files, so I would avoid also labeling individual files as "output.” I suggest changing this sentence to something like: “The results of the simulation should be stored in the output folder using an informative filename (e.g., results_simulation.csv). This makes it possible to download the results only when needed.”.”
--->
-```
-
-```{=html}
-<!-- 
-We discuss mostly recommendations for data files and folder organisation but very little on code. Should we add a code section?
--->
-```
-
-### 3 File and Folder Naming Conventions
-
-As unanimous agreement on naming conventions is difficult to achieve, folder structure and naming conventions of folders and files will vary between research projects and fields. Nevertheless, some basic principles should be applied to facilitate machine-readable repositories and automated processing.
-
-Folders are used to group related files. For scientific papers, folders can represent projects, such as single studies, and categories of files. Most research files can be organised into the folders data, code, outputs, materials, and documentation, with an 'other' folder for files that do not fit the other five categories. The top-level folder is associated with a paper, and it contains files that apply to all sub-folders in the repository. An example of a file that belongs to the top level folder is a README -- a text document that provides a human-readable description of the repository contents and instructions on reusing them.
-
-The Psych-DS format, a data structure for research in the social sciences, recommends that repositories should contain a subfolder for each project in which data were collected. For multi-study manuscripts, this means that the repository contains a subfolder for each study (e.g., 'pilot-classification', 'study-mood-classification', 'study-moderator-effect-mood'). Studies should be named consistently and clearly from the first documentation such as an ethical review application or preregistration. Because studies may not be communicated in the same order in which they were conducted, and because numbers do not describe what a study is about, avoid refer to studies simply as 'study-1', 'study-2', etc. Instead, use short, descriptive labels that assist machines to link data in a repository to a specific study in a manuscript. Once the final order of studies has been determined (e.g., when writing the manuscript), a number can be added to each study subfolder (e.g., '01-pilot-classification', '02-study-mood-classification').
-
-At a minimum, each study folder should contain a 'data' folder. Data files should be accompanied by a codebook. Some analysis software, such as JASP and Jamovi, stores data, codebook information, analyses, and output in a single file (i.e., a .jasp or .omv file). This removes the need for additional files and folders: a single .jasp or .omv file in the data folder will allow a machine to retrieve all the information it needs to reproduce the analyses. If all analyses can be perform in JASP or Jamovi, the easiest solution for machine-readable FAIR data and code sharing is therefore to import the data, enter the codebook information, perform the analyses, and share the resulting .jasp or .omv file. This may often be an easier and more reproducible than performing the analyses in R, where making data and code equally FAIR requires substantially more work and expertise.
-
-If a standalone codebook is needed, software packages that can assist with its creation [@arslan_how_2019]. When data are analyzed using individual code files, these should be placed in a 'code' folder. A study folder might also contain an 'output' folder for results generated by analysis scripts. Repositories may additionally contain a 'documentation' folder for documents such as the preregistration document and manuscript, and a 'materials' folder for stimuli, survey files, and other study materials.
-
-Software will likely search for these folders using a range of aliases. For example, a documentation folder might be called 'reports' or 'docs', the materials folder might be called 'assets' or 'stimuli'. As long as the variation in filenames is limited, software can search for a predefined list of names to identify folders containing particular types of files. This reduces reliance on large language models for file classification, which is less reliable and more computationally expensive than rule-based classification.
-
-Files and folders should be named so that they are both human-readable, and facilitates classification by machines. Because files often need to be classified according to multiple properties (e.g., a unique identifier, and the type of file), a machine should be able to distinguish between these properties in a filename. A useful convention is to use underscores to distinguish different properties. For example, the filename 'study-01-classification_data.csv' allows a machine to identify both the unique identifier (i.e., study-01) and the file type (i.e., data). For classification purposes, the use of underscores or dashes is less important than consistently including terms that indicate file's category. Even a CamelCase filename such as 'codePowerSimulationStudy1' could be classified by a machine if it contains an informative category term.
-
-What is essential is that each filename contains a word that allows a machine to classify it into a category. For scientific data, the main categories are `data`, `code`, `output`, `documentation`, and `materials`. Filenames are an important source of information for machines attempting to classify the contents of a repository, and should therefore include one of these five words or a sufficiently similar word, such as `data_dictionary`. `stimuli`). Filenames should also include a descriptive keyword indicating their specific content (e.g., 'preprint_documentation.pdf'). Given the lack of unanimous agreement on file naming conventions, machines may need to classify files using filenames and extension rules, with a large-language-model as a fallback for files that remain ambiguous after rule-based classification.
-
-```{=html}
-<!--
-I think it would be useful to add a figure showing an example of a repository structure with folders and files, including a codebook, a README file. This would make it easier for readers to understand the ideal repo structure.
-
+```text
 repository/
 ├── README.md
 ├── code/
@@ -207,106 +177,358 @@ repository/
 │   ├── analysis.R
 │   └── simulation.R
 ├── data/
-│   └── raw_data.csv
-│   └── processed_data.csv
+│   ├── raw_data.csv
+│   ├── processed_data.csv
+│   └── codebook.csv
 ├── output/
 │   ├── results_simulation.csv
 │   ├── table_results.csv
 │   └── figure_results.png
 ├── materials/
-│   ├── survey.txt
+│   └── survey.txt
 ├── documentation/
-│   ├── preregistration.txt
-│   └── codebook.csv
+│   └── preregistration.txt
 ├── renv.lock
 └── LICENSE
--->
 ```
 
-Some software might interpret names with and without capitalisation as different files (e.g., Data.csv versus data.csv). Be consistent in the use of capitals. In general, it is recommended to only use lowercase letters, unless schemas and other data standards require capitalized filenames. Avoid spaces and special characters in filenames. Filenames should also allow for lexographic sorting of numbered files. For example, if '2-data' precedes '11-data' name the files '02-data' and '11-data'. If you plan to limit the number of files in a repository to 99 (as required by Zenodo), two digits should be sufficient. However, studies with a large number of stimuli or individual data files per participant, might require more digits for the files contained within a .zip archive. Dates should be provided in YYYYMMDD format, following the ISO 8601 basic calendar format ('20260724_data.csv'), although the extended format ('2026-07-24_data.csv') may also be used when required by a particular convention.
+#### 2.1.2 File and folder naming conventions
 
-The use of subfolders can lead to long file and folder names. Certain file systems and software tools limit filenames to 255 characters. Furthermore, when a repository is downloaded, the local folder path is added to the path of every file. For example, if a repository is downloaded to `C:\Users\dlakens\Downloads`, the filenames in the repository should remain below 228 characters. As a practical recommendation, try to keep the directory names (e.g., 'study-1-representative-sample/individual-participant-files/accuracy/') below 100 characters and filenames below 50 characters, leaving around 100 characters for the local folder path.
+Files and folders should be named so people can understand them and software can classify them. Because files may need to be identified by several properties (e.g., study identifier and file type), use a consistent naming pattern that makes these properties distinguishable. Underscores can separate properties: `study-01-classification_data.csv`, for example, identifies both the study (`study-01`) and the file type (`data`). For classification, using underscores or hyphens matters less than consistently including informative category terms. A CamelCase name such as `codePowerSimulationStudy1` can also be classified if it contains a recognizable category term.
 
-Names should match the terminology used in the manuscript. If the manuscript refers to 'Study 1', for example, the corresponding study folder should use the same identifier ('Study 1') rather than a different label such as 'Survey 1' or 'Aggression Study'. This allows machines to link data and code in multi-study papers to the appropriate section of the manuscript. Meta-data (for example following the RO-Crate standard, as discussed in the next section) can provide additional information about files and folders that cannot be reliably encoded in their names alone.
+Each filename should include a term that helps software assign it to a category. Common categories are `data`, `code`, `output`, `documentation`, and `materials`. Include one of these terms, or a recognised synonym such as `data_dictionary` or `stimuli`, together with a descriptive keyword for the file's specific contents (e.g., `preprint_documentation.pdf`). Machines can classify files using filename and extension rules, with a large language model as a fallback for files that remain ambiguous.
 
-### 4 Describe the Content and Organization of the Files
+Be consistent with capitalization because some software treats `Data.csv` and `data.csv` as different files. Lowercase names are generally preferable unless a schema or data standard requires capitalization. Avoid spaces and special characters. Use leading zeros so numbered files sort in the intended order (e.g., `02-data` before `11-data`). Choose enough digits for the largest expected sequence. Dates should use the ISO 8601 format `YYYYMMDD` (e.g., `20260724_data.csv`); the extended format `YYYY-MM-DD` may be used when required by a particular convention.
 
-A common recommendation for data and code sharing is to add a README document to every repository. README documents are useful for re-users who manually browse through a repository, and should therefore be included to describe its contents and provide instructions for reuse. However, a README is not very useful for machine processing. README documents should therefore be complemented by a structured counterpart containing information that cannot easily be retrieved from the files in the repository and that is of general interest for re-users.
+Long folder names can produce file paths that exceed limits imposed by file systems or software. Some systems limit filenames to 255 characters, and downloading a repository adds the local folder path to each file path. For example, if a repository is downloaded to `C:\Users\dlakens\Downloads`, the paths within the repository should remain below 228 characters. As a practical guide, keep directory paths below 100 characters and individual filenames below 50 characters, leaving room for the local path.
 
-This structured metadata file should provide information about the repository and its files that is difficult to retrieve from the files themselves. It should also identify the research project to which the files belong to and who created it. While researchers might assume that re-users will find their files through the article they have published, machines are more likely to find repositories directly. Therefore, the meta-data should describe the project independetly of the manuscript and link to the manuscript DOI when one exists. Although good file naming should allow re-users to understand the contents of the files in a repository, adding this information automatically to the JSON file also provides a means of validating that filenames were unambiguous and provides ground truth when names may be necessarily ambiguous.
+Names should match the terminology and identifiers used in the manuscript. If the paper refers to `Study 1`, for example, use the same study identifier in the corresponding folder rather than an unrelated label such as `Survey 1` or `Aggression Study`. This helps software link repository files to the relevant part of a multi-study paper. Metadata, including RO-Crate metadata discussed above, can describe file and folder contents that cannot be conveyed reliably through names alone.
 
-Adding meta-data to a repository is complex because multiple standards operate at different levels. Dublin Core metadata standards store generic information about a repository, such as its title, description, creator, and license. The [DDI Alliance](https://ddialliance.org) provides ISO-standard specifications designed to describe research data in the social, demographic, economic, and health sciences. The [DDI-Lifecycle 3.3](https://ddialliance.org/Specification/DDI-Lifecycle) standard can be used to describe study design, sampling, and data, and supports the reuse of data. Field-specific meta-data standard can be developed to describe files common in specific research areas, such as [BIDS for brain data](https://bids.neuroimaging.io/index.html), or [Psych-DS](https://psych-ds.github.io) for research data in psychology. Finally, there are also metadata standards for specific types of research data within specific fields, such as the [Open Scales Database](https://openscales.net/spec.php) specification for scales in psychology.
+#### 2.1.3 README and repository-level metadata
 
-There is a clear need for field-specific guidelines on which meta-data should be shared. Tools should be developed to make it easy for researchers to generate JSON structured metadata files that comply with widely used metadata specifications. These recommendations will likely drawn on existing standards, such as the [DDI-Lifecycle 3.3](https://ddialliance.org/Specification/DDI-Lifecycle) for the study, sample, and data-handling descriptions, [CRediT](https://credit.niso.org/) for contributor roles, [schema.org](https://schema.org) for bibliographic metadata, and the RO-crate specification [@ROCrate2022] to document the relationship between files in a repository and support machine readable FAIR principles.
+Every repository should include a README. It helps people browsing the repository understand its contents and provides instructions for reuse. Because free-form README text is less reliable for automated processing, it should be complemented by structured metadata containing information that cannot easily be retrieved from the files themselves and is useful to re-users.
 
-Some information is difficult to retrieve from a paper but valuable for reuse. Such information can be directly encoded into metadata files. Which information is important enough to included is a matter on which research fields should reach consensus. In many empirical disciplines, information about the sample size is worth documenting because the amount of information collected is relevant for reuse in meta-analyses and partly determines the strength of the evidence. The DDI-Lifecycle schema provides standardized metadata for sample eligibility criteria, inclusion and exclusion criteria, recruitment, the target sample size, the number of completed responses, and the resulting response rate.
+Structured metadata should describe the repository and its files, including information that is difficult to retrieve from the files themselves. It should identify the research project and its creators. Because machines may find a repository independently of the article, describe the project separately from the manuscript and include the manuscript DOI when one exists. Adding file descriptions to a JSON metadata file can also help check whether file names are unambiguous and provide a reliable description when they are not.
 
-As data provenance -- a log of how a study's data came into existence -- becomes increasingly important, metadata could also describe the time window during which data was collected, the situation in which it was collected (for example, whether sessions were supervised, individual or group, or ran during an exam period), and the mode of collection (e.g., an online survey, in person interviews). DDI's `LifecycleEvent` schema allows researchers to list each study's data-handling steps as a series of events, stating what happened, when, and who was responsible. This makes it possible to log anyone who handled the data but is not an author. This makes it possible to document people who handled the data but not authors. These could include a research assistant who ran the sessions, a technician who exported the files, or a data manager who curated and archived the files. Recording these contributions makes this labour visible and provides a clear record of responsibility for each data processing step, which may be particularly important when research integrity concerns arise. As a final example, the increased interest in assessing whether manuscripts adhere to open science practices could motivate the development of a dedicated metadata schema for open science practices. Such schema could indicate whether all data that can be shared have been made available, whether the code needed to reproduce all reported results has been shared, whether the materials needed to replicate a study have been made available, and whether the study has been preregistered in a study registry.
+Repository metadata can be challenging because different standards operate at different levels. Dublin Core provides generic metadata about a repository, such as its title, description, creator, and license. The [DDI Alliance](https://ddialliance.org) provides ISO-standard specifications for describing research data in the social, demographic, economic, and health sciences. [DDI-Lifecycle 3.3](https://ddialliance.org/Specification/DDI-Lifecycle) can describe study design, sampling, and data to support reuse.
+
+Field-specific guidelines are needed to clarify which metadata should be shared. Tools should make it easy to generate structured JSON metadata that follows widely used specifications. Such guidance could draw on existing standards, including [DDI-Lifecycle 3.3](https://ddialliance.org/Specification/DDI-Lifecycle) for study, sample, and data-handling descriptions; [CRediT](https://credit.niso.org/) for contributor roles; [Schema.org](https://schema.org) for bibliographic metadata; and the RO-Crate specification [@ROCrate2022] for describing relationships among repository files and supporting machine-readable FAIR data and code.
+
+Some information is difficult to retrieve from a paper but valuable for reuse, and can be recorded directly in metadata. Research fields should determine which information is important enough to include. In many empirical disciplines, sample size is useful for meta-analysis and helps indicate the strength of the evidence. DDI-Lifecycle provides standardized fields for sample eligibility, inclusion and exclusion criteria, recruitment, target sample size, completed responses, and response rate.
+
+Metadata can also describe data provenance: how and under what circumstances the data were collected and handled. Useful details may include the collection period, whether sessions were supervised or conducted individually or in groups, whether collection took place during an exam period, and whether data were collected online or in person. DDI's `LifecycleEvent` schema allows researchers to record data-handling steps, including what happened, when, and who was responsible. This can document contributions by research assistants, technicians, and data managers who are not authors, making their work visible and clarifying responsibility for each processing step. A schema for open science practices could also indicate whether shareable data, code, and materials have been made available and whether the study was preregistered.
+
+Researchers may also share documentation such as codebooks, preregistration documents, the manuscript, supplementary materials, and README or metadata files. These documents provide context for interpreting and reusing data and code, so identify them clearly in the repository and will be discussed in detail in Section 2.2.4.
+
+#### 2.1.4 Repository size, packaging, and selective downloads
+
+Online repositories often provide generous storage limits. For example, Zenodo has a standard limit of 100 files and 50 GB per record; additional storage can be allocated ([file limits](https://help.zenodo.org/docs/deposit/manage-files/); [storage quota](https://help.zenodo.org/docs/deposit/manage-quota/)). Large repositories can still make reuse difficult: users may lack the time or storage to download files they do not need, and automated tools may impose limits on the size of individual files or entire repositories. Organise and label files so users can download only the materials relevant to their purpose. For example, someone looking for analysis data should be able to retrieve the data and code without also downloading large video files used as stimuli.
+
+Compression can reduce the size of large files. For multiple files, a `.zip` archive can be useful: its central directory lists the files it contains, including their names and sizes. Because this directory is near the end of the archive, software can retrieve it using HTTP range requests—when the server supports them—without downloading the entire archive. This allows users to check whether an archive contains relevant files before downloading it in full. Prefer ZIP to proprietary formats such as `.rar` when interoperability matters.
+
+### 2.2 Data
+
+#### 2.2.1 Raw and processed data
+
+Where possible and appropriate, researchers should share raw data: the data in the form in which they were originally generated or collected. Examples include files exported from Qualtrics, audio recordings, and individual-participant EEG data. Raw data provide a record of the original observations and allow others to understand and reproduce the processing steps applied to them.
+
+Sharing raw data is not always possible or appropriate. The data may not have been collected digitally, may contain information that cannot be adequately anonymised, or may be subject to ethical or legal restrictions. In such cases, share the earliest digital representation that can be made available, such as scanned surveys or anonymised transcripts. When data must be processed before they can be analysed or shared—for example, to remove identifying columns or convert unstructured data into a table—use code to perform these transformations whenever possible. Share the resulting minimally processed data together with the code used to create it. The README should explain how the processed data were created from the raw data and describe the transformations applied.
+
+Using code rather than manually editing raw data has two advantages. It creates an auditable record of the transformations, allowing others to inspect the workflow for potential errors, and it makes the transformations reproducible: the same code can be rerun if errors are found, processing needs to be updated, or a new data version is required. Avoid manual changes to raw data; document any that cannot be avoided.
+
+#### 2.2.2 File formats and data export
+
+Store data in open, machine-readable formats such as `.csv`, or in widely used software-specific formats such as `.sav`, `.jasp`, or `.omv`. For very large files, consider whether the format and repository support partial downloads through HTTP range requests. CSV files can allow parts of a file to be retrieved without downloading it in full, whereas formats such as `.xlsx` may require downloading the whole file.
+
+When data are collected using commercial software, or on paper (e.g., a printed questionnaire), the raw data may not be available in an open format. In such cases, store the original files in a folder named `raw` inside the `data` folder, preferably in a `.zip` archive if there are many or large files. Also export the data, as directly as possible, to an open format such as CSV. CSV files should follow the [RFC 4180 specification](https://datatracker.ietf.org/doc/html/rfc4180) and use UTF-8 encoding. Enclose commas within data values in double quotation marks (e.g., `pp1, 34, "To be, or not to be."`). Avoid plain `.txt` files for tabular data unless their structure is documented, because the extension alone does not tell software how to interpret their contents. Similarly, use `.rds` files for individual R objects rather than storing them in `.RData` files, which can contain multiple objects and make their contents harder for software to identify. File extensions should match the underlying format; for example, save a JSON file as `.json`, not `.csv` or `.txt`.
+
+Compression can substantially reduce the size of large data files. Gzip (`.gz`) is particularly useful for large CSV files because compressed CSV files can be read directly without first being decompressed. We recommend gzip compression for CSV files larger than approximately 10 MB.
+
+Spreadsheets (`.xls` or `.xlsx`) can also be used to store data. While the `.xlsx` format is based on Office Open XML and widely supported by open-source software, the `.xls` format relies on Microsoft's proprietary format and should be avoided to prioritize open-source alternatives. Do not store separate datasets on multiple tabs, because filenames cannot identify the contents of individual tabs; save each dataset as a separate file. Merged cells, empty rows or columns, and other layouts that depart from a rectangular table can also make spreadsheets difficult to import into data-analysis software.
+
+Some analysis software, such as JASP and jamovi, can store data, codebook information, analyses, and output in a single file (`.jasp` or `.omv`). When all analyses can be conducted in one of these programs, sharing the resulting file may provide a simple way to make the data, labels, analyses, and output available together. This can require less setup than sharing separate data and code files, particularly for researchers who do not use a scripted workflow.
+
+#### 2.2.3 Tabular data files
+
+Leave cells for missing values blank when the software used to read the data can interpret them as missing (e.g., as `NA` in R). Avoid ad hoc missing-value codes such as `999 = no response` or `888 = hardware failure`. If such codes must be retained—for example, because they are present in the raw data—document them in the metadata or codebook. Do not rely on colour, comments, or hyperlinks to convey information, as these may be lost when data are imported into other software; use dedicated columns instead (e.g., a `notes` column). CSV files and spreadsheets should have a single header row in the first row of the file.
+
+Data files should be rectangular tables with a tidy structure: one header row, one variable per column, and one observation per row. Software such as SPSS, JASP, and jamovi expects this structure. Spreadsheet editing can introduce problems such as headers spanning multiple rows, empty rows or columns, and notes placed below or alongside the data.
+
+Column names should follow more restrictive conventions than filenames. Use only letters, digits, and underscores (e.g., `participant_id`, `mean_reaction_time`) to make names easier to reference in analysis code; in R, for example, a column can be accessed as `df$participant_id`. Names containing spaces or dashes must be quoted or accessed using another explicit syntax (e.g., `df[["participant id"]]`). Special characters, including diacritics, may need to be escaped or may be renamed when data are imported into other software, sometimes creating duplicate names. Keep names shorter than 32 characters, the limit in some analysis packages. Names must be unique within each file, consistent for the same variables across files, and identical to the corresponding names in the codebook.
+
+Use descriptive column names that can be understood without consulting the analysis code (e.g., `self_esteem_scale_1` rather than `SE1`; avoid generic names such as `VAR1`). Where possible, use terminology that matches the manuscript. For items belonging to the same scale or construct, use a consistent prefix and sequential numbers (e.g., `self_esteem_scale_1`, `self_esteem_scale_2`, `self_esteem_scale_3`). This convention can also identify subscales (e.g., `panas_positive_1` for the first item of the Positive and Negative Affect Schedule's positive-affect subscale), making it easier for software to identify scales and subscales. Place items from the same scale in adjacent columns where possible. When several columns describe the same response, such as the response and its reaction time, make each column's meaning clear (e.g., `mood_1_response`, `mood_1_reaction_time`).
+
+Avoid rows or columns containing only empty values, which may indicate that a value was not recorded, a column was deleted, or a row or column was accidentally left blank. Remove empty rows or columns where possible. If an empty variable must be retained, document why it is present rather than assigning an arbitrary value such as `0` or `none`. Column names and values should not contain leading or trailing whitespace (e.g., use `yes`, not ` yes `). Avoid mixing text and numbers in otherwise numeric columns: a value such as `no response` can cause software to interpret the entire column as text. Use a consistent missing-value convention and document it in the codebook. Before sharing data publicly, check for personal information such as email addresses or IP addresses and remove or anonymise it as appropriate. Screen open-text responses for identifying information as well.
+
+#### 2.2.4 Metadata and codebooks
+
+Field-specific metadata standards can describe files commonly used in particular research areas, such as [BIDS for brain data](https://bids.neuroimaging.io/index.html) and [Psych-DS](https://psych-ds.github.io) for psychological and behavioral research data.
+
+In addition to repository-level metadata, individual studies can be organized in Psych-DS-compliant subfolders. Each Psych-DS dataset requires a `dataset_description.json` file containing a machine-readable description of the dataset. Variable-level information, such as definitions and measurement details, can be provided in a data dictionary or related metadata. Unlike `ro-crate-metadata.json`, which describes provenance, contributions, and general relationships among files, these data descriptions help explain what the variables represent and support their reuse. ([Psych-DS data dictionaries](https://psych-ds.github.io/psychds-r/articles/data-dictionaries.html))
+
+Machine-readable data descriptions support findability and reuse, and allow users to search for studies that collected particular types of data. Psych-DS uses Schema.org's Dataset model with additional Psych-DS fields. Structured descriptions can be generated automatically from well-organized repositories when the codebook is accurate and file and folder names are informative.
+
+A codebook, or data dictionary, describes the contents of data files; the terms are often used interchangeably. @buchanan_getting_2021 note that a codebook traditionally describes survey variables and may be created during data collection, whereas a data dictionary is often created during planning and may also describe the structure of data files. Regardless of the term used, each data file—or each set of files with the same structure—should have an accompanying codebook. Data files should have a single-row header, and the codebook should explain what the column names and values mean. Some formats (e.g., SPSS, Stata, SAS, JASP, jamovi, and Qualtrics) support variable and value labels, allowing some codebook information to be embedded in the data file. If a standalone codebook is needed, software packages can assist with its creation [see for example @arslan_how_2019]. A complete codebook should contain six types of information:
+
+1. **Column name:** Use the name exactly as it appears in the data file (e.g., `panas_1`).
+2. **Label:** Provide a plain-language description (e.g., `positive and negative affect schedule item 1`). For variables not derived from survey questions, describe what the values represent, such as reaction times or correct/incorrect responses. If a variable belongs to an established scale, include the scale's full name. At a minimum, provide the column name and label.
+3. **Value labels:** For variables with a limited number of response options, explain what each value means (e.g., `1 = very negative; 2 = somewhat negative; 3 = neutral; 4 = somewhat positive; 5 = very positive`). If only the endpoints are labelled, document those (e.g., `1 = very negative; 5 = very positive`).
+4. **Question or item text:** For survey data, include the verbatim question or item shown to participants.
+5. **Missing-value codes:** If missing values are coded differently across columns, specify the code used for each variable.
+6. **Coding instructions:** Describe any processing needed to interpret or calculate scores, such as reverse-scoring an item or calculating a mean from PANAS items 1–10. If instructions are too complex for a table, explain them in a README or provide code that transforms the data.
+
+One way to create a codebook is to enter the relevant information in data-analysis software. In SPSS (`.sav`), Stata (`.dta`), SAS (`.sas7bdat`), JASP (`.jasp`), jamovi (`.omv`), and Qualtrics (`.qsf`), variable and value labels can be stored with the data. These formats can therefore combine data and some codebook information in one file, but may not capture every field needed for a complete codebook. For example, not all formats provide fields for documenting missing-value codes or the exact survey-item text, and none provides a dedicated field for coding instructions. Provide a separate codebook when information is missing from the data file.
+
+Psych-DS provides a schema for describing data files and variables in JSON. Codebooks can also be tabular, with a column for each type of information recorded about a variable. An example is provided in @tbl-codebook-example.
+
+```{r}
+#| echo: false
+#| label: tbl-codebook-example
+#| tbl-cap: "Example of codebook"
+
+codebook <- tibble::tribble(
+  ~`variable-name`, ~label, ~values, ~`missing-values`, ~question, ~`coding-instructions`,
+  "pid", "Participant identifier", "", "", "", "",
+  "age", "Age in years", "", "-99", "What is your age in years?", "",
+  "gender", "Self-reported gender", "1 = Man; 2 = Woman; 3 = Non-binary", "99",
+  "Which best describes your gender?", "",
+  "bds_1", "Breakup Distress item 1", "1 (Strongly disagree) to 5 (Strongly agree)", "99",
+  "I feel overwhelmed by the breakup.", "",
+  "bds_3", "Breakup Distress item 3", "1 (Strongly disagree) to 5 (Strongly agree)", "99",
+  "I am coping well.", "Reverse scored: 6 - bds_3",
+  "bds_mean", "Breakup Distress mean score", "", "", "",
+  "Mean of bds_1 to bds_10 after reversing bds_3"
+)
+
+codebook |> 
+  flextable() |> 
+  width(j = c("values", "question", "coding-instructions"), width = 1.5)
+```
+
+Tabular codebooks can be stored as `.csv` files, but a spreadsheet may be easier to create. Copy the column names from the data file and transpose them (i.e., convert the header row into a column) in the codebook so that names match exactly. Store values as text where needed, because Excel may convert values such as `1-5` into dates such as `5-Jan`.
+
+Store codebooks as `.ods`, `.xlsx`, or `.csv` files. The first two formats are generally easier for people to read, while CSV is more interoperable. Avoid Word or PDF files because their contents cannot be reliably parsed by machines. Name a codebook `codebook` or `data-dictionary`. If a folder contains one data file, its location identifies the corresponding codebook; if it contains several, include the data filename in each codebook name (e.g., `pilot-1a_data.csv` and `pilot-1a_codebook.csv`).
+
+### 2.3 Code
+
+Code files are part of the research record and should be organized so that their purpose and relationship to other repository files are clear. These may include scripts, notebooks, and configuration files created or adapted for the project. Brief documentation should identify what each file does and which data or outputs it relates to, helping others understand and reuse the code.
+
+When a script contains multiple analyses, results should be organised so that users can identify which analysis produced each output. One approach is to use separate scripts and corresponding output files with consistent naming conventions (e.g., 01_simulation.R and 01_results_simulation.csv), and store the resulting files in the output folder. The execution of these scripts can be automated using the {targets} R package, which tracks dependencies between scripts and functions to determine the order in which they should run. This makes it easier to manage projects with multiple interdependent scripts and ensures that analyses are executed in the correct sequence.
+
+The practice of clearly labeling files in repositories is also important to distinguish links to repositories that contain existing software used in research (e.g., a GitHub link to a software tool created by others that was used to process physiological data) from links to repositories that contain code generated by the researchers themselves for their research (e.g., code for an agent-based model that researchers have created as part of their research).
 
 ```{=html}
-<!-- 
-We could also mention creating a schema for PICOS. This could be of interest for meta-analyses and systematic reviews. Imagine that you can search for papers not only based on the topic, but also across the five dimentions of the PICOS framework. This would facilitate the identification of relevant studies for meta-analyses as well as verification of the study inclusion criteria, or whether all studies included in the meta-analysis are "similar". 
+<!--
+I am not sure what to make of the above paragraph. It mentions links to repositories, but this section focuses on code organisation. These would be links to two different projects, so I am not sure how file labelling relates to this distinction. It needs clarification.
 -->
 ```
 
-In addition to the general metadata discussed above, individual studies can be represented as Psych-DS compliant subfolders to facilitate data reuse. The [Psych-DS](https://psych-ds.github.io/) standard requires a `dataset_description.json` file, which provides a machine-readable description of a specific dataset, including every variable, its measurement scale, its value range, the originating data file, and potentially additional information such as descriptive statistics. Unlike `ro-crate-metadata.json`, which describes provenance, contributions, and general properties of the data and code, this file describes what the data mean, enabling software to more accurately process variables in data files.
+Computational reproducibility refers to the ability to produce the same outputs from the same data and code inputs. However, differences in software versions, package dependcies or computational settings can prevent analyses from being reporduced. To address this, the software and dependencies required to run the analysis should be clearly specified. For example, R projects can include an renv.lock file and Python projects a requirements.txt or environment.yml file. For analyses that depend on system libraries or software beyond R or Python packages, containerized solutions such as Docker, Nix, or Code Ocean provide stronger guarantees that the computational environment can be reconstructed in the future.
 
-Machine-readable data descriptions support findability, reuse and reproducible analyses. They also allow users to search databases for studies that collected specific data. The Psych-DS JSON-LD document is based on Schema.org's Dataset model, extended with Psych-DS specific fields. These JSON files can be generated automatically from well-organized repositories, if they contain an accurate codebook, and use sensible file and folder names.
+### 2.4 Output
 
-Even more fine-grained schemas exists for subsets of data files, such as psychological scales. The [Open Scale Definition](https://openscales.net/) (OSD) is a machine-readable format for sharing metadata about questionnaires and rating instruments. It is part of the Psychology Experiment Building Language, which was created for building and running psychological experiments [@mueller_psychology_2014]. An `.osd` file has two top-level parts: a `definition`, which describes the structure, in a language-neutral way and `translations`, which contains the actual text, keyed by language code, allowing the same structure to represent versions of a scale in different languages. The OSD specification requires `scale_info`, `likert_options`, `dimensions`, `items` and `scoring` (although an entry can be set to `NULL`). Scale information includes the name, code, abbreviation, citation to the original publication of the scale, license information, and other descriptive information. The JSON file can also contain information about the Likert-scale response options, the dimensions of the scale (such as subscales, and which items belong to which subscale), how the scale is scored, and the specific text of each item in different translations when available. FAIR scale metadata facilitates reuse and can also promote standardization in how scales are used and scored across studies.
+Researchers may also share output files such as statistical results, tables, figures, and simulation results. These files allow peers to inspect research outputs directly, without necessarily having to rerun the analyses. These outputs are particularly useful when generating them requires substantial computation or when they help peers verify reported results. In these cases, analytical results should be saved in reusable formats (e.g., .rds or .csv files) rather than being available on the software console. For example, in R, researchers can store key analytical results in objects and save them for later inspection or reuse. Alternatively, when analyses require little computational time, workflows such as Quarto allow analytical results to be embedded directly in rendered documents, reducing the need to store outputs separately.
 
-### 5 File Formats
+### 2.5 Materials
 
-Data should be stored in open, machine-readable formats, such as .csv, or in well-supported software-specific files such as .svp, .jasp or .omv. Very large data files should be stored in file formats that allow partial downloads of information through range requests. For example, CSV files allow parts of the text to be retrieved without downloading the entire file, whereas this may not be possible for other other formats such as .xslx.
+Study materials may include questionnaires, rating scales, stimuli, survey files, and other resources used to conduct a study. Field-specific metadata standards can make structured materials, especially scales and questionnaires, easier to identify and reuse. The [Open Scales Database](https://openscales.net/spec.php), for example, provides a specification for scales in psychology.
 
-When data are collected with commercial software, or when data are not collected digitally (e.g., a questionnaire printed on paper), it is may not be possible to make raw data (i.e., data in the form they were originally observed) available in open format. In such cases, the raw data files should be stored in a folder called "raw" inside the data folder, preferably in a .zip archive if there are many files or if the files are large. The raw data should be also exported, as directly as possible, to an open format such as csv. CSV files should follow the [RFC 4180 specification](https://datatracker.ietf.org/doc/html/rfc4180) and UTF-8 encoding. Commas used within a data value should be enclosed in double quotation marks (e.g., `pp1, 34, "To be, or not to be."`). Avoid using plain .txt files for data storage, as machines cannot reliably determine how to interpret their contents. Similarly, do not use .RData files to store R output when individual objects can be stored as .rds files. An .RData file can contain multiple objects, making it difficult for software to determine how what it contains. The file extension should accurately reflect the underlying format. For example, a JSON formatted file should be saved as .json, rather than as .csv or .txt.
+The [Open Scale Definition](https://openscales.net/) (OSD) is a machine-readable format for describing questionnaires and rating instruments. It is part of the Psychology Experiment Building Language, which was created for building and running psychological experiments [@mueller_psychology_2014]. An `.osd` file has two top-level parts: `definition`, which describes the scale's structure in a language-neutral way, and `translations`, which stores the scale text by language code so that the same structure can represent different language versions. The OSD specification includes `scale_info`, `likert_options`, `dimensions`, `items`, and `scoring`; an entry can be set to `NULL`. The `scale_info` field includes the scale's name, code, abbreviation, original publication citation, license, and other descriptive information. The remaining fields describe response options, dimensions and subscales, scoring, and item text in available translations. Machine-readable scale metadata can support reuse and promote consistency in how scales are used and scored across studies.
 
-Spreadsheets (.xls or .xlsx) can also be used to store data. The .xlsx format is an Open Office XML format that can be read in any open source-software packages. However, several practices should be avoided. First, one should not store separate datasets in multiple tabs. Because filenames are used to classify data files, a filename cannot distinguish the data contained in different tabs. Instead, store separate datasets as separate files. Second, data should be rectangular, with each column containing the same number of rows, so that they can be reliably imported into other software. Spreadsheets with merged cells cannot be read as a data frame, and spreadsheets with empty rows or columns can also cause problems.
+### 2.6 Licenses
 
-Leave missing cells empty since software can replace empty cells with an empty value (e.g., as NA in R). Avoid coding scheme for missing values such as 999 = 'no response', 888 = 'hardware failure'. If such practice cannot be avoided, for example because you do not have control over the raw data, document the coding scheme in the metadata or codebook. Do not rely on colour coding, comments, or hyperlinks to communicate information. This information is often lost when the data are imported into other software. Instead, record it in dedicated columns (e.g., a 'notes' column). CSV files and spreadhseets should contain headers in the first row, with a single row used to label the columns.
+Sharing data and materials is not enough; repositories should also clearly specify the conditions under which their contents may be reused. Adding a license clarifies the permissions granted to others, including whether they may use, share, adapt, distribute, and reproduce the materials in any medium or format. For example, under a Creative Commons Attribution (CC BY) license, these activities are permitted as long as users give appropriate credit to the original author(s) and source, provide a link to the license, and indicate whether changes were made. If the repository owner has not selected a specific license, check the repository's default license. A single license may not be appropriate for every file type: code generally requires a software-specific license (e.g., MIT or GPL), whereas data and other non-software outputs can be shared under a Creative Commons license or public-domain dedication (e.g., CC BY or CC0). Creative Commons recommends against using its licenses for software because they do not address software-specific issues (see [documentation] (https://creativecommons.org/faq/#can-i-apply-a-creative-commons-license-to-software)). Before applying a license, ensure that you have the rights or permission to license the material, and consider privacy, consent, funder or institutional requirements, and third-party rights. The [Choose a License] (https://choosealicense.com/non-software/) website offers guidance to help researchers select an appropiate license for research outputs.
 
-### 6 Codebooks and data dictionaries
+Include the full license text in a clearly named `LICENSE` file at the repository root. GitHub allows you to add a license when creating a repository and automatically generates the corresponding file and file text based on the chosen license. If different parts of the repository have different licenses, use separate license files or state clearly in the README and repository metadata which license applies to each type of content. Also check the repository's default license before depositing files: for example, Zenodo defaults to CC BY 4.0 for records and allows different licenses to be declared for different files, such as MIT for software and CC BY for documentation. For more information, see the [Zenodo documentation] (https://help.zenodo.org/docs/deposit/describe-records/licenses/) on licenses and rights and [GitHub's guidance] (https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/licensing-a-repository) on licensing a repository.
 
-A codebook, or data dictionary, describes the contents of data files. The two terms are often used interchangeably and largely contain the same information. @buchanan_getting_2021 note that a codebook customarily describes survey variables and can be created during data collection, whereas a data dictionary is more commonly created in the planning stage, and may additionally document the structure of data files. Regradless of terminology, every data file (or set of data files with identical structure) should have a codebook. Data files should have a single-row header containing column names, and the codebook should explain what these names represent and what the values in the columns mean. Some data formats (e.g., SPSS, Stata, SAS, JASP, jamovi, Qualtrics) support variable and value labeles, and can therefore contain an embedded codebook.
+## 3 Automatic assessment of FAIR data and code
 
-A complete codebook should contain six types of information. First, it should contain the column name exactly as it appears in the data file (e.g., `panas-1`). Second, it should contain a label describing the column in prose (e.g., `postive and negative affect schedule item 1`). If the data did not originate from a survey question, the label should describe what the values in the column represent (e.g., reaction times, correct or false responses, reading times, etc). The goal of the label is to provide a human-readable explanation of the variable, and add context. If the item is part of an existing scale, the full name of the scale should also be provided here. At a minimum, a codebook needs a column name and a label.
+We have discussed more than 100 recommendations that researchers can follow to make their repositories machine-readable. However, researchers may not have the necessary expertise, knowledge or time to learn and implement all these recommendations. Furthermore, given the large number of recommendations, it is unrealistic to expect researchers to remember and consistently apply them all. One solution is to help researchers ensure their data and code is as FAIR as possible using automation. Metacheck [@metacheck-package] is an open-source R package that has dedicated modules to help researchers iteratively improve the FAIRness of their repositories, including data and code.
 
-Third, for data with a limited number of response options, the codebook should provide value labels. For scales, these describe how the response options were labeled (e.g., `1 = very negative; 2 = somewhat negative; 3 = neutral; 4 = somewhat positive; 5 = very positive`). If only the endpoints are labeled, then only enter those two values (e.g., `1 = very negative; 5 = very positive`). Fourth, for data that was generated based on survey questions, enter the verbatim question text (`Interested`). Fourth, for data generated from survey questions, the verbatim question or item text presented to participants should be provided. Fifth, if it is not possible to specify a single coding scheme for missing data across all data columns in the repository metadata (see above), an individual missing-value coding scheme can be provided for each column. Sixth, coding instructions can be provided when useful. One important coding instruction is `reverse scored` for items that should be reverse coded before combining into a scale mean. Other coding instructions can describe how a variable was or will be used in the calculation of the scale (e.g., `mean of PANAS items 1-10`) or whether scores need to be transformed before analyis. If coding instructions are too complex to represent in a tabular format, refer to a README or other document that explains the coding or, ideally, provide code that transforms the data into scores.
+Researchers can use Metacheck either by providing a manuscript containing a link to a repository or by uploading a repository folder directly. Broadly speaking, three modules are designed to automatically check whether repositories follow many of the recommendations discussed in this work: `repo_check`, `data_check` and `code_check`. For a detailed discussion on how Metacheck can be used to assess FAIR data and code practices across a corpus of articles, including an evaluation of the accuracy of these modules see [CITATION].
 
-The easiest way to create a codebook is often to use data analysis software, and complete the relevant codebook fields within the software. If your data are in SPSS (`.sav`), Stata (`.dta`), SAS (`.sas7bdat`), JASP (`.jasp`), jamovi (`.omv`), or Qualtrics (`.qsf`), variable and value labels can be entered in the software and shared as part of the data file. An important benefit of these formats is that they combine the data and codebook information in a single file. However, these formats do not necessarily contain all the information nedded for a complete codebook. Beyond `.sav` and `.jasp` files, the other formats do not allow users to specify missing values. Beyond Qualtrics, these formats do not allow specification of the exact survey item, and none provides a dedicated field for coding instructions. Therefore, if any of these additional fields are needed, a separate codebook should be provided.
+```{r}
+#| eval: FALSE
+#| echo: FALSE
 
-PsychDS provides a schema for describing data files in a JSON-formatted codebook. However, many codebooks have a tabular structure, with column headers specifying the type of information recorded for each variable. An example is provided in @tbl-codebook.
+# For illustrative purposes, we download a repository corresponding to faicticious paper. 
+# The repository contains several related to the FAIR principles.
 
-| variable-name | label | values | missing-values | question | coding-instructions |
-|------------|------------|------------|------------|------------|------------|
-| `pid` | Participant identifier |  |  |  |  |
-| `age` | Age in years |  | -99 | What is your age in years? |  |
-| `gender` | Self-reported gender | 1 = Man; 2 = Woman; 3 = Non-binary | 99 | Which best describes your gender? |  |
-| `bds_1` | Breakup Distress item 1 | 1 (Strongly disagree) to 5 (Strongly agree) | 99 | I feel overwhelmed by the breakup. |  |
-| `bds_3` | Breakup Distress item 3 | 1 (Strongly disagree) to 5 (Strongly agree) | 99 | I am coping well. | reverse scored: 6 - bds_3 |
-| `bds_mean` | Breakup Distress mean score |  |  |  | mean of bds_1 to bds_10 after reversing bds_3 |
+download.file(
+  "https://github.com/Lakens/stroop_effect_paper_bad/archive/refs/heads/main.zip",
+  destfile = "bad_repo.zip",
+  mode = "wb"
+)
 
-: : Example of a codebook {#tbl-codebook}
+# Unzip the file
+unzip("bad_repo.zip", exdir = "bad_repo")
 
-Although tabular codebooks can be created as .csv files, it may be most convenient to use a spreadsheet. When creating the codebook, the column names can be copied from the data file, and transposed (i.e., converted from one row into one column) before being pasted in the spreadsheet. This helps ensure that the column names in the data file and codebook match exactly. Make sure values are stored as text, as Excel might transform values such as `1-5` into a date such as `5-Jan`.
+# Remove the _extensions folder to prevent its contents from being included in the `repo_module` report
+unlink(
+  "bad_repo/stroop_effect_paper_bad-main/_extensions",
+  recursive = TRUE
+)
+```
 
-The codebook can be stored as an `.ods`, `.xlsx`, or `.csv` file. The first two formats are easier to read by humans, while CSV files are more interoperable. Do not store codebooks as Word documents or PDF files, as information in these formats cannot be reliably parsed by machines. Name the file `codebook` or `data-dictionary`. If there is only one data file in the same folder, there is no need to include the data filename in the codebook, as the folder establishes the relationship between the files. If a folder contains multiple data files, however, use the filename to match each codebook to its corresponding data file (e.g., `pilot-1a_data.csv` and `pilot-1a_codebook.csv`).
+```{r}
+#| echo: false
 
-### 7 Tabular data files
+# Generate a report using `repo_check`, `code_check`, `data_check` and `codebook_check`
+res <- report_repository(
+  "bad_repo/stroop_effect_paper_bad-main",
+  output_file = "bad_repo/bad_repo_report.html"
+  )
+```
 
-Data files should be rectangular tables with a tidy structure: one header row, one variable per column, and one observation per row. Analysis software such as SPSS, JASP and Jamovi will require this structure, but when data files are created or edited in spreadsheets, it is very tempting to perform actions that deviate from this standard. Common problems include headers spanning multiple rows, empty columns or rows, and notes written notes below or alongside the data.
 
-Best practices for column names are more restrictive than best practices for filenames. Column names should contains only letters, digits, and underscores (e.g., `participant_id`, `mean_reaction_time`) should be used to make them easier to reference in analysis code. In R, a column can then be references as `df$participant_id`. If a column name contains spaces or dashes, it needs to be quoted (e.g., `` df$\`participant-id\ `` or `` df$\`participant id\ ``). Special characters often need to be escaped to print, or may be automatically renamed when a data file is imported into other software. This can create problems, including identical column names when two columns only differ in a special character. The same applies characters with diacritics. Keep column names shorter than 32 characters, as this is the limit for some analysis software packages. Column names should be unique within a data file, and columns representing the same information across different files should use the same name (e.g., `participant_id`). Column names must also match the corresponding names in the codebook exactly.
+The `repo_check` module identifies links to repositories in manuscripts, examines their contents, and performs checks on the repository structure and its files. One of its outputs is a table listing all files identified in the repository, including their names, file types and paths (Table @tbl-repo-files).
 
-Use descriptive column names that can be understood without consulting the analysis code (e.g., use `self_esteem_scale_1` rather than `SE1`, and never use generic names such as `VAR1`). Where possible, use terminology that matches how variables are described in the manuscript. When columns belong to the same scale or construct, use the same prefix followed by an increasing number (e.g., `self_esteem_scale_1`, \``self_esteem_scale_2`, `self_esteem_scale_3`). If a scale contains subscales, the same convention can be extended to identify the subscale (e.g., `panas_1_positive_1` for the first item of the positive affect subscale of the Positive and Negative Affect Schedule). This makes it easier for machines to identify scales and subscales automatically. Scale items belonging to the same scale should be placed in adjacent columns where possible. When multiple columns relate to the same response, such as the response value and its response time, clearly indicate the property represented by each column (e.g., `mood_1_response`, `mood_2_response`, `mood_1_reactiontime`, `mood_2_reactiontime`).
+```{r}
+#| echo: FALSE
+#| label: tbl-repo-files
+#| tbl-cap: "Files identified in the repository by the `repo_check` module."
 
-There should be no columns or rows containing exclusively empty values. Blank cells are ambiguous: they may indicate that a value was not recorded, that a column was deleted or that a column was accidentally left empty. If a column contains no recorded values, replace the empty cells during data preprocessing with a value that indicates nothing was recorded (e.g., 'none' or 0) and document the meaning of this value in the codebook. Column names and values should not contain leading or trailing whitespace (e.g., use `yes`, not `yes` or `yes`). Avoid mixing text and numeric values in columns that are otherwise numeric. For example, adding a single text value such as 'no response' to a column of numerical responses can cause software to interpret the entire column as text rather than numeric. Instead, use a consistent missing-value code and document it in the codebook. Before sharing data publicly, carefully check whether the raw data contains personal information such email addresses or IP addresses, and remove or anonymize such information as appropriate. Open-text responses should also be screened for identifying information before the data are shared.
+res$repo_check$table |> 
+  select(
+    Name = file_name, 
+    Type = file_type, 
+    Path = file_path
+    ) |> 
+  flextable() |> 
+  width(j = c("Name", "Path"), width = 1)
+```
+
+All Metacheck modules use a traffic-light system to indicate potential problems. For `repo_check`, warnings relate to the repository level and may include missing README files, files that do not belong to the repository, or issues with file naming. Running the module on the example repository produces the following traffic-light output:
+
+```{r}
+#| echo: false
+light <- res$repo_check$traffic_light
+```
+
+> `r light`
+
+A red light signals that issues have been identified and must be addressed. In addition to the traffic-light system, the module provides a summary of its findings. For example, when applied to the example repository, the module returns the following summary: 
+
+```{r}
+#| echo: false
+#| include: false
+
+res$repo_check
+```
+
+> -  We found 7 files in 1 repository.
+> -  We found 1 README file and 0 repositories without READMEs.
+> -  We left out 1 file that does not belong in a repository: operating system (1). Remove it from the repository.
+
+The summary indicates that the repository contains an unnecessary file that should be removed. The repo_check module also provides a table listing files that may need to be removed, including their paths, type, and severity (Table @tbl-unnecessary-files):
+
+```{r}
+#| echo: FALSE
+#| label: tbl-unnecessary-files
+#| tbl-cap: "Unnecessary files identified in the repository by the `repo_check` module."
+
+res$repo_check$useless_files |> 
+  select(
+    Path = file_path,
+    Kind = kind,
+    Severity = severity
+  ) |> 
+    flextable()
+```
+
+In this example, a DS_Store file is identified. This is a macOS system file that stores folder-specific settings and is not relevant to the research project. It should therefore be removed from the repository.
+
+The `data_check` module examines the files in a research repository to identify those containing data, such as spreadsheets and CSV files. For each data file it can read, the module provides an overview of its columns, including their names and data types, and checks for potential issues, such as entirely empty columns or inconsistencies in how categorical values are recorded. Running the module on the repository example, returns the following summary:
+
+```{r}
+#| echo: FALSE
+#| include: FALSE
+res$data_check
+```
+
+> -  We classified 7 files: 1 data, 1 code, 5 documentation.
+> -  We found 1 tabular data file and extracted 9 columns from 1 of them.
+> -  We grouped the files into 1 study group (ex1), plus 1 collection-level file (README/ro-crate metadata). We ran 
+> automated data-quality checks on 9 columns; 5 columns have at least one potential issue (1 column with inconsistent 
+> category casing; 1 column with no observed values (entirely empty); 1 column with numeric values stored as text; 1 column > whose name suggests personal information; 1 column whose values look like personal information; 1 column holding an SPSS > "Select Cases" filter (analyses may have used only a subset of rows)). We detected demographic columns for Age, Gender.
+
+The module identified 5 columns might have at least one potential issue. These include inconsistent capitalisation of categorical values, an entirely empty column, numeric values stored as text, a column whose name suggests it may contain personal information, a column whose values appear to contain personal information, and a column containing an SPSS "Select Cases" filter, which may indicate that analyses were performed on only a subset of the rows.
+
+The module also provides a summary of the potential issues identified, including the affected file, column, type of check, and details of the finding (Table @tbl-data-findings).
+
+```{r}
+#| echo: FALSE
+#| label: tbl-data-findings
+#| tbl-cap: "Potential issues identified in the repository by the `data_check` module."
+
+res$data_check$findings |> 
+  select(
+    Name = source_file,
+    Column = column,
+    Check = check,
+    Detail = detail
+  ) |> 
+    flextable() |> 
+    width(j = "Check", width = 2) |> 
+    width(j = "Detail", width = 3)
+```
+
+The `code_check` module examines the code files linked to a paper and identifies common issues that may prevent the code from running elsewhere. These include hard-coded file paths pointing to the author's computer, missing comments explaining analytical steps, and references to packages that are not explicitly loaded in the script. These checks help identify potential barriers to computational reproducibility. RunninG the module returns the following summary:
+
+```{r}
+#| echo: FALSE
+#| include: FALSE
+res$code_check
+```
+
+> -  We found 1 R, 0 Python, 0 SAS, 0 SPSS, 0 Stata, 0 Mplus, 0 MATLAB, and 0 JASP code file.
+> -  1 code file (analysis.qmd) had no comments.
+> -  setwd() calls were found.
+> -  All libraries/imports were loaded in one block.
+> -  No pinned R/package environment (renv.lock, sessionInfo(), or groundhog/checkpoint) was found. Consider adding a 
+> solution to improve computational reproducibility.
+
+The module identified three potential issues with the analysis code. These include the absence of comments in the analysis.qmd file, the use of setwd() to set the working directory, and the absence of a pinned R/package environment (e.g., renv.lock). The latter makes it more difficult to reconstruct the software environment required to run the analysis.
+
+The `codebook_check` module uses the results from data_check to examine whether each data column is described in an accompanying codebook. Columns with a corresponding description are labelled, whereas those without a description are classified as unlabelled. This helps identify variables that require further documentation to make datasets easier to understand and reuse. The example repository contains a codebook file with descriptions of the dataset variables (Table @tbl-codebook), shown below:
+
+```{r}
+#| echo: FALSE
+#| label: tbl-codebook
+#| tbl-cap: "Variables described in `codebook.csv`."
+
+res$codebook_check$codebook_vars |> 
+  select(
+    Variables = codebook_variable,
+    Label = label,
+    Source = codebook_source
+  ) |> 
+    flextable() |> 
+    width(j = c("Variables", "Source"), width = 1) |> 
+    width(j = "Label", width = 2.5) 
+```
+
+Running the module returns the following summary:
+
+```{r}
+#| echo: false
+#| include: false
+
+res$codebook_check
+```
+
+> -  We parsed 2 variable definitions from codebook/README files.
+> -  2 of 9 data columns (22%) are documented in a codebook; 7 are not.
+
+The module correctly identifies the seven data columns that are not documented in the codebook, highlighting where additional variable descriptions are needed.
+
+Together, these modules illustrate how Metacheck can help researchers identify potential issues that hinder the FAIRness of research data and code, supporting efforts to make their repositories and their contents machine-readable.
 
 ## Discussion
 
-Data and code should be shared where possible to facilitate verification, reproducibility and reuse. Repositories containing FAIR data and code should allow machines to find and access all content. This requires data and code to be made available in online repositories that can feasibly be downloaded; files and folders to be clearly named and organized in a consistent folder structure to allow automatic classification and identification of relationships between files; the repository contents to be described using machine-readable metadata; files to be shared in open and machine-readable formats; a codebook to be included included; data files to be well-structured; and, where relevant, metadata about measures and tasks to be provided. Schemas such as Psych-DS, RO-Crate JSON-LD, DDI-Lifecycle, CRediT, Open Scales Definition, and Behaverse Data Model can facilitate FAIR data and code.
+Data and code should be shared as FAIR as possible to facilitate verification, reproducibility and reuse. Repositories containing FAIR data and code should enable machines to find and access all content. Achieving this requires several practices: data and code should be made available in online repositories from which they can be downloaded; files and folders should have clear names and be organized in a consistent folder structure that facilitates their automatic classification and identification of relationships between files; repository contents should be described using machine-readable metadata; files should be shared in open, machine-readable formats; codebooks should be included; data files should be well-structured; and, where relevant, metadata describing measures and tasks should be provided. The use of schemas such as Psych-DS, RO-Crate JSON-LD, DDI-Lifecycle, CRediT, Open Scales Definition, and Behaverse Data Model [@defossez_structure_2020] can facilitate FAIR data and code.
 
-Adhering to best practices for FAIR data and code is complex and effortful. This document contains more than 100 recommendations and it is unreasonable to expect researchers or data managers to remember and implement them all. One solution to overcome the challenges of implementing all these recommendations and training of researcher is to automate the generation and validation of FAIR data and code as much as possible. Software could scan a repository and assist researchers in iteratively improving its FAIRness. Metacheck (https://github.com/scienceverse/metacheck) is one implementation of this approach: it scans a repository, classifies files, retrieves information from data files and codebooks, and can assist in creating metadata files. Input from researchers remains essential for information that cannot be inferred automatically, but manual inputs should only be required where needed.
+Adhering to best practices for FAIR data and code is complex and effortful. This document contains more than 100 recommendations and it is unrealistic to expect researchers and data managers to remember implement them all. It becomes essential to assist researchers in the FAIRification of their research outputs with automated tools, such as Metacheck [@metacheck-package]. However, automated checks of whether metadata follow a particular schema cannot establish whether their contents are accurate or complete. Researchers must still verify, for example, that units are correct, processing steps are adequately described, and a codebook reflects the shared dataset. Guidance on scientific code review similarly emphasises the value of informed human examination alongside technical checks [@ivimeycook_review_2023; @rokem_review_2024; @hillemann_review_2025].
 
 The potential of machine-readable data and code extends beyond individual repositories. If data repositories can be scanned automatically, information about their contents could be processed automatically, and stored in a central database. Researchers could then search for data files containing particular scales or tasks while filtering by characteristics of the sample such as demographic information. This could greatly facilitate the reuse of research data. Machine-readable code and data could also make automated reproducibility checks possible increasing the quality of scientific manuscripts, without increasing the burden on peer reviewers. More broadly, machine-readable repositories could help researchers demonstrate adherence to research-integrity requirements to FAIR data and code when possible. They could also allow universities, funders, and other research organizations to automatically check whether shared research outputs meet relevant data-sharing requirements.
 

@@ -1,0 +1,95 @@
+---
+title: "Stroop Effect Study"
+author:
+  - name: Daniël Lakens
+    corresponding: true
+    email: D.Lakens@tue.nl
+    affiliations:
+      - name: Eindhoven University of Technology
+        department: Industrial Engineering and Innovation Sciences
+        address: Den Dolech 2, 5600 MB
+        city: Eindhoven
+abstract: "Students in an introductory psychology course completed an online Stroop task, naming the font colors of words in congruent and incongruent trials. Being in the incongruent condition caused slower reaction times."
+bibliography: references.bib
+format:
+  apaquarto-pdf:
+    a4paper: true
+---
+
+```{r global_options, echo=FALSE, warning=FALSE, message=FALSE, include=FALSE}
+library(ggplot2)
+library(reshape2)
+knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE, include=TRUE)
+```
+
+# Introduction
+
+Here we analyze a Stroop experiment. Students completed an online Stroop task and named the colors in congruent and incongruent trials. Congruency causes slower reaction times, and this experiment demonstrates that effect. Reaction-time tasks of this kind have also been used to study how the presence of other people affects responding in an emergency [@hortensius2015].
+
+```{r}
+setwd("C:/Users/dlakens/Desktop/stroop_study")
+stroop_data <- read.csv("stroop.csv")
+```
+
+# Plotting the data
+
+```{r}
+#| fig-width: 4
+#| fig-height: 4
+#| dpi: 150
+
+ggplot(stroop_data, aes(x = Congruent, y = Incongruent)) +
+  geom_point(alpha = 0.35) +
+  theme_bw(base_size = 14) +
+  geom_smooth(method = 'lm', formula = y~x, color = 'black') +
+  coord_fixed() +
+  ylab("Incongruent") + xlab("Congruent") +
+  theme(plot.margin = unit(c(0, 0, 0.5, 0.5), "lines"))
+```
+
+```{r}
+#| include: false
+sapply(stroop_data[, c("Congruent", "Incongruent")], mean)
+sapply(stroop_data[, c("Congruent", "Incongruent")], sd)
+ttest_result <- t.test(stroop_data$Incongruent,
+                       stroop_data$Congruent,
+                       alternative = "two.sided",
+                       paired = TRUE,
+                       var.equal = TRUE,
+                       conf.level = 0.95)
+N <- length(stroop_data$Congruent)
+diff <- stroop_data$Incongruent - stroop_data$Congruent
+s_av <- sqrt((sd(stroop_data$Congruent)^2 + sd(stroop_data$Incongruent)^2) / 2)
+d_av <- mean(diff) / s_av
+d_unb <- (1 - (3 / (4 * (N - 1) - 1))) * d_av
+```
+
+# Results
+
+The mean reaction time of participants in the Congruent condition (M = 15.1, SD = 4.1) was lower than the mean of participants in the Incongruent condition (M = 23.0, SD = 4.78). Reaction times in the two conditions were correlated, r = 0.37. A dependent t-test indicated that we could reject the null-hypothesis, t(130) = 18.04, p = .25, Cohen's dz = 0.25. There was also a marginally significant difference in accuracy between conditions, p = .07. Accuracy did not differ between congruent and incongruent trials (p = .34), confirming that accuracy was unaffected by congruency. The congruency effect on reaction time was highly significant, p = .000. The Stroop effect did not differ between the students tested in 2013 and in 2014, t(120.37) = -0.42, p = .673.
+
+```{r}
+#| include: false
+t.test(stroop_effect ~ Year, data = stroop_data)
+```
+
+```{r}
+#| echo: false
+#| fig-width: 4
+#| fig-height: 4
+#| dpi: 150
+
+stroop_data_long <- melt(stroop_data, id.vars = "PPNR", measure.vars = c("Congruent", "Incongruent"), variable.name = "congruency", value.name = "reactiontimes")
+
+ggplot(stroop_data_long, aes(x = congruency, y = reactiontimes)) +
+  geom_boxplot() +
+  geom_jitter(alpha = 0.25, width = 0.2) +
+  ylab("Reaction Times")  + xlab("Condition") + theme_bw(base_size = 14) +
+  theme(panel.grid.major.x = element_blank())
+```
+
+# Discussion
+
+These results confirm the Stroop effect. Data and analysis code are available at https://github.com/Lakens/stroop_effect_paper_bad.
+
+# References
