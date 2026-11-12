@@ -1,9 +1,6 @@
 ---
-title: "Best Practices for Machine Readable Data and Code Sharing in Psychology"
-shorttitle: "Machine Readable FAIR data and code"
-# CREDIT roles: Conceptualization, Data curation, Formal analysis, Funding acquisition, 
-# Investigation, Methodology, Validation, Visualization, Writing – original draft, 
-# Writing – review & editing
+title: "Best Practices for Machine-Readable Data and Code Sharing in Psychology"
+shorttitle: "Machine-Readable FAIR Data and Code"
 author:
   - name: Daniël Lakens
     corresponding: true
@@ -34,12 +31,12 @@ author:
     affiliations:
       - name: University of Glasgow
         department: Institute of Neuroscience and Psychology
-abstract: "The FAIR principles state that research materials should be Findable, Accessible, Interoperable, and Reusable [@wilkinson_fair_2016]. Best practices for FAIR data and code involve the creation of consistently structured repositories and standardised, machine-readable meta-data, but adhering to these best practices is a complex and effortful task. Previous literature has disussed how to adhere to these best practices with a focus on data and meta-data. Here we describe a variety of best practices and existing standards, with a practical focus on repository content and organization and introduce software that can facilitate these practices."
+abstract: "The FAIR principles state that research materials should be Findable, Accessible, Interoperable, and Reusable [@wilkinson_fair_2016]. Adhering to these principles requires data and code to be organised in consistently structured repositories and accompanied by standardised, machine-readable metadata. However, implementing these principles can be complex and effortful. Previous literature has disussed how to make research materials FAIR, with particular focus on data and metadata. Here, we first describe best practices and existing standards for repository organisation, content, and file naming. We then demonstrate how researchers can use Metacheck to identify issues that hinder the FAIRness and machine-readability of repositories and their contents."
 keywords: [FAIR, Data sharing, Reproducibility, Open Science]
 author-note:
   disclosures:
     conflict-of-interest: "The authors have no conflict of interest to declare."
-    data-sharing: "A reproducible version of this manuscript available at on GitHub  (https://github.com/scienceverse/machine_readable_FAIR_data_and_code)."
+    data-sharing: "A reproducible version of this manuscript available at on GitHub (https://github.com/scienceverse/machine_readable_FAIR_data_and_code)."
     financial-support: "This work was funded with the support of the  Netherlands Organization for Scientific Research (NWO Vici grant VI.C.241.013)."
 bibliography: fair_data_code.bib  
 floatsintext: true
@@ -58,44 +55,91 @@ This was in the abstract, is maybe notes?
 Distinguish necessary from optional metadata. How do codebooks deal with units? Variable types 
 -->
 ```
+```{r}
+#| echo: false
+#| message: false
+
+# Load packages
+library("metacheck")
+library("tidyverse")
+library("metacheck")
+library("flextable")
+```
 
 
-Access to the data and code that underlie findings in the scientific literature allows peers to scrutinize the evidential basis for empirical claims, and to increase the efficiency of knowledge generation through re-use. The [European Code of Conduct for Research Integrity](https://ec.europa.eu/info/funding-tenders/opportunities/docs/2021-2027/horizon/guidance/european-code-of-conduct-for-research-integrity_horizon_en.pdf) states: "Researchers, research institutions, and organisations ensure that access to data is as open as possible, as closed as necessary, and where appropriate in line with the FAIR Principles (Findable, Accessible, Interoperable and Reusable) for data management." [@allea_code_2023]. Similarly, the [Dutch Code of Conduct for Research Integrity](https://www.nwo.nl/sites/nwo/files/documents/Netherlands%2BCode%2Bof%2BConduct%2Bfor%2BResearch%2BIntegrity_2018_UK.pdf) states that: "Ensure that, in accordance with the FAIR principles, data is open and accessible to the extent possible and remains confidential to the extent necessary." [@netherlands_code_2018] Accordingly, research materials should be managed in accordance with the FAIR Principles [@wilkinson_fair_2016]. Meeting these standards requires repositories to preserve the information needed to locate, understand, and use the deposited research outputs. To this purpose, Data management plans (DMPs) help researchers specify how data will be managed, documented, preserved, and shared throughout a project [@michener2015ten; @miksa2019ten]. Our recommendations complement this planning by providing practical guidance on how to chose a repository and how to organize and document the different types of files within a research repository to support implementation of the FAIR principles. 
+Access to the data and code that underlie findings in the scientific literature allows peers to scrutinize the evidential basis for empirical claims, and to increase the efficiency of knowledge generation through re-use. The [European Code of Conduct for Research Integrity](https://ec.europa.eu/info/funding-tenders/opportunities/docs/2021-2027/horizon/guidance/european-code-of-conduct-for-research-integrity_horizon_en.pdf) states: "Researchers, research institutions, and organisations ensure that access to data is as open as possible, as closed as necessary, and where appropriate in line with the FAIR Principles (Findable, Accessible, Interoperable and Reusable) for data management." [@allea_code_2023]. Similarly, the [Dutch Code of Conduct for Research Integrity](https://d2y7tnbi225lw.cloudfront.net/2026-10/20261020-KNAW-NGWI-2027-EN-def.pdf) states that: "Ensure that data, software, and research materials are as open and accessible as possible in accordance with the FAIR principles." [@netherlands_code_2026]. Accordingly, research materials should be managed in accordance with the FAIR Principles [@wilkinson_fair_2016]. Meeting these standards requires repositories to preserve the information needed to locate, understand, and use the deposited research outputs. To this purpose, Data Management Plans (DMPs) help researchers specify how data will be managed, documented, preserved, and shared throughout a project [@michener2015ten; @miksa2019ten]. Our recommendations complement this planning by providing practical guidance on how to chose a repository and how to organize and document the different types of files within a research repository to support implementation of the FAIR principles. 
 
 Following a data management plan, making research files available and including an appropriate license does not, by itself, ensure that others will be able to use them. In psychology, @hardwicke_analytic_2021 examined 25 articles awarded open-data badges between 2014 and 2016 and reproduced the target results. For 64% of the articles there were numerical discrepancies when trying to reproduce the results, after contacting the authors 37 out of 789 checked values remained unmatched. The principal obstacle was the unclear reporting of analytical procedures. Later, @trisovic_large_2022 examined more than 9,000 R files from replication datasets deposited in Harvard Dataverse and 74% failed to compile without errors during initial execution. They also report how it is essential to use descriptive file naming, and found that about one third of the files (32%) contained a space in the name, a highly discouraged practice. These studies show how code and data sharing is not enough to guarantee reuse. Such barriers prevent the ability to properly inspect materials, adapt code, or reuse the data for a new research question.
 
 The FAIR Principles provide a framework for improving the Findability, Accessibility, Interoperability, and Reusability of research outputs by both people and machines [@wilkinson_fair_2016]. Their emphasis extends beyond whether software can read a file: automated systems also need information about what a resource contains, how it relates to other resources, and under which conditions it can be used. Those Principles were explicitly developed with both human and machine users in mind. Although it is important that individual can find, access, and re-use data, the benefits of FAIR data and code can only be realised when scientific resources are also accessible and processable by machines. Therefore, research data and code should be shared in machine-readable formats [e.g., see @lakens_improving_2021 for an example of the benefits of machine-readable hypothesis]. Machine-readable FAIR data and code will make it possible to retrieve and integrate data into large, searchable databases, and facilitate the automation of tasks, such as checking data and code for adherence to best research practices. Applying FAIR to research software introduces additional considerations, including software versions, dependencies, and the relationships among software components. These considerations motivated the development of the FAIR Principles for Research Software, or FAIR4RS [@lamprecht_towards_2020; @chuehong_fair4rs_2022; @barker_introducing_2022]. This guide summarises best practices for sharing data and code in ways that make them findable, accessible, interoperable, and reusable by both humans and machines.
 
-A machine can only find data and code reliably and automatically if they have a stable digital identifier and metadata; can be accessed through standardized protocols (e.g., HTTPS or an Application Programming Interface (API)); are provided in formats that can be used by other software (e.g., non-proprietary formats accompanied by metadata describing how files should be read in); and are re-usable (e.g., by providing a codebook and a license).
+A machine can only find data and code reliably and automatically if they have a stable digital identifier and metadata. Metadata are structured information that describe other data or files, providing details such as their content, structure, format, origin, and how they should be interpreted. In addition, data and code should be accessisable through standardized protocols (e.g., HTTPS or an Application Programming Interface (API)); provided in formats that can be used by other software (e.g., non-proprietary formats accompanied by metadata describing how files should be read in); and re-usable (e.g., by providing a codebook and a license).
 
 When data and code are shared this way, an automated computational system can identify what files contain — including both their format and purpose — based on metadata or filenames; determine whether they can be accessed and reused, for example given the license or privacy regulations; and process the data and code accordingly. Ideally, each of these steps should be unambiguous and deterministic, minimizing the need for probabilistic inference by machine-learning algorithms or large language models. This guide is intended for researchers and data managers. It discusses best research practices for making data and code machine-readable and FAIR, including where to share data and code, repository organization, file naming, file formats, codebooks, README and requirement files, data layout, column naming, codebook generation, specification of scales and measures and adherence to existing schemas and standards.
 
-Practical guidance already addresses many aspects of sharing research outputs. Recommendations in neuroscience and biology explain how to prepare and document code for others [@eglen_toward_2017; @abdill_guide_2024], while minimum standards for data and code emphasise organised files, informative metadata, reusable formats, and explicit licences [@jenkins_reproducibility_2023]. More recently, TADA has proposed minimum requirements for sharing functional analytical code [@ivimeycook_tada_2025], and the SORTEE guidelines have established a staged framework for assessing archived data and code, from their availability and documentation to their correspondence with a manuscript and computational reproducibility [@pick_sortee_2026]. 
+Existing recommendations address different aspects of research sharing. Some focus preparing and documenting code for reuse[@eglen_toward_2017; @abdill_guide_2024], while others address the organisation of data and code, emphasising structured files, informative metadata, reusable formats, and explicit licences[@jenkins_reproducibility_2023]. More recently, TADA has proposed minimum requirements for sharing functional analytical code [@ivimeycook_tada_2025], and the SORTEE guidelines have established a staged framework for assessing archived data and code, from their availability and documentation to their correspondence with a manuscript and computational reproducibility [@pick_sortee_2026]. 
 
-The proposed word brings these recommendations together at the level of a complete research repository in psychology. A repository may contain data and code, codebooks, scripts, questionnaires, stimuli, generated outputs, and supporting documentation. Reusing these resources requires their purposes and relationships to be clear: which codebook describes a dataset, which script produces an output, which materials belong to a particular study, and which licence applies to each resource. Standardised organisation of files and explicit metadata can make these relationships easier to establish without requiring users to reconstruct them from the manuscript or contact the original authors.
+The proposed work brings these recommendations together at the level of a complete research repository in psychology. A repository may contain data and code, codebooks, scripts, questionnaires, stimuli, generated outputs, and supporting documentation. Reusing these resources requires their purposes and relationships to be clear: which codebook describes a dataset, which script produces an output, which materials belong to a particular study, and which licence applies to each resource. A standardised repository structure, supported by explicit and consistent metadata, can make these relationships easier to establish without requiring users to reconstruct them from the manuscript or contact the original authors.
 
-This guide synthesises existing standards and practical recommendations into a resource organised around repository contents and file types. It covers repository choice, folder structure and naming, data formats and codebooks, code, outputs, materials, licences, and approaches to assessing FAIRness. The emphasis on machine-readable descriptions builds on broader efforts to make scientific information easier to discover and reuse automatically, including machine-readable hypothesis tests [@lakens_improving_2021]. The intended outcome is a repository from which people and software can identify the available resources, understand their relationships, retrieve relevant files, and determine the conditions for their reuse.
+This guide synthesises existing standards and practical recommendations into actionable guidance organised around repository structure, contents and file types. It covers repository selection, folder structure and naming conventions, data formats and codebooks, code, outputs, research materials, licences, and approaches to assessing FAIRness. Its emphasis on machine-readable descriptions builds on broader efforts to make research outputs easier to discover and reuse automatically[@lakens_improving_2021]. Ultimately, this work aims to support the creation of repositories in which peers and software can identify the available resources, understand how they relate to one another, retrieve relevant files, and determine the conditions for their reuse.
 
 ## 1 Repository Choice
 
-There are many data repositories, each with different strengths and limitations. When choosing a data repository, some features should be taken into account: whether it allows you to share anonymized versions of the repository and specific files, or control who can access your data, whether the repository provides persistent identifiers (e.g., DOIs), stable versions, version control, appropriate metadata, and machine access. Other considerations include compatibility with regulations such as the General Data Protection Regulation (GDPR), funder requirements, and any limitations on the types or quantities of data that can be archived.
+There are many data repositories, each with different strengths and limitations. When choosing a repository, several features are worth considering. These include whether it allows repositories or files to be shared anonimously, whether access to data can be restricted to specific users, and whether it provides persistent identifiers (e.g., DOIs), stable versions, version control, appropriate metadata, and programmatic access. Other important considerations include compatibility with relevant regulations, such as the General Data Protection Regulation (GDPR), compliance with funder requirements, and restrictions on the types or quantities of data that can be archived.
 
-To support the choice of a repository, there are curated registries containing detailed information on data repositories such as re3data [@re3data] and OpenDOAR [@opendoar] allowing to filter repositories based on specific characteristics. In this section we will discuss a selection of commonly used repositories in psychology including Zenodo, GitHub, the Open Science Framework, ResearchBox, Figshare, and PsychArchives. Countries and universities may also provide dedicated research data repositories, such as the UK Data Service or DataverseNL. GitHub is primarily a platform for developing and collaborating on code rather than a data repository. Public GitHub releases can be archived through Zenodo, which assigns a DOI to each release and preserves a specific version. In Zenodo, files in a published version remain fixed; updates to files are represented as new versions, while the record also has a DOI that can point to all versions.
+Curated registries, such as re3data [@pampel2023] and [OpenDOAR](https://opendoar.ac.uk/), can help researchers identify suitable repositories based on specific characteristics. This section discusses a selection of crepositories commonly used in psychology, including Zenodo, GitHub, the Open Science Framework, ResearchBox, Figshare, and PsychArchives. Researchers may also have access to dedicated research data repositories provided by they country or university, such as the UK Data Service or DataverseNL. 
 
-@tbl-repository-choice provides a brief comparison of repositories commonly used in psychology and related social sciences. It is intended as an overview, not a ranking; institutional services based on platforms such as Dataverse or Figshare may differ from their general-purpose versions. Features and policies can change, so researchers should check the current terms and technical documentation for the specific service before depositing data. The comparison follows dimensions discussed in a recent overview of repository choice, including persistence, machine access, metadata, peer-review sharing, usability, and data protection [Lakens, 2026](https://daniellakens.blogspot.com/2026/08/which-data-repository-should-you-use.html).
+It is important to distinguish between platforms designed primarly for code development and collaboration and those intended for archiving research outputs. GitHub is primarily a platform for developing and collaborating on code rather than a data repository. However, public GitHub releases can be archived through Zenodo, which assigns a DOI to each release and preserves a citable snapshot of the repository. Zenodo also provides a concept DOI that resolves to the record containing all versions, alongside a version-specific DOI for each release.
 
-| Repository | Main advantages | Limitations and points to check |
-|---|---|---|
-| [Zenodo](https://zenodo.org) | DOIs, versioning, API, and options to restrict access to files. | No folder hierarchy; metadata remain public when files are restricted; file updates require a new version. ([versioning](https://zenodo.org/help/versioning); [file access](https://help.zenodo.org/docs/deposit/manage-files/)) |
-| [GitHub](https://github.com) | Code development, collaboration, version history, releases, and API. Public releases can receive a DOI through Zenodo. | Primarily for code collaboration, not long-term data archiving; Zenodo DOI integration requires a public repository. ([citing GitHub content](https://docs.github.com/en/repositories/archiving-a-github-repository/referencing-and-citing-content)) |
-| [Open Science Framework (OSF)](https://osf.io) | Project collaboration and view-only links for peer review. | No new projects or components from November 16, 2026; existing projects become read-only on February 19, 2027. ([transition guidance](https://help.osf.io/article/727-osf-projects-transition)) |
-| [ResearchBox](https://researchbox.org) | Search within data and code, automatically generated codebooks, and a documented API. | Check that its preservation arrangements, access options, and file limits fit the project. ([API](https://researchbox.org/api)) |
-| [Figshare](https://figshare.com) | DOIs, versioning, API, and support for a range of research outputs. | Storage limits and features can differ between Figshare.com and institutional services. ([overview](https://info.figshare.com/about/)) |
-| [PsychArchives](https://psycharchives.org) | Psychology-focused repository; links related research outputs and offers anonymized reviewer links. | Aimed for psychology and related disciplines; datasets must be anonymized; standard file limit is 1 GB, with larger deposits possible by request. API documentation and automated access to restricted files should be checked. ([repository information](https://psycharchives.org/en/about)) |
-| [DataverseNL](https://dataverse.nl) | Dataset DOIs, versioning, metadata, access management, and API-based upload. | Depositing data requires an account; institutional policies and available support may differ. ([benefits](https://support.dataverse.nl/support/solutions/articles/80000969621-what-are-the-benefits-of-using-dataversenl-for-sharing-your-research-data); [access](https://support.dataverse.nl/support/solutions/articles/80000968475-how-can-i-make-use-of-dataversenl-)) |
-| [UK Data Service ReShare](https://reshare.ukdataservice.ac.uk) | Social-science repository with review of deposits and open or safeguarded access options. | Deposits must fit the UK Data Service's scope and policies; safeguarded files may require registration or permission. ([repository information](https://reshare.ukdataservice.ac.uk/information.html)) |
+@tbl-repository-choice provides a brief comparison of repositories commonly used in psychology and related social sciences. The table is intended as an overview rather than a ranking, as the features of institutional services based on platforms such as Dataverse or Figshare may differ from those of their general-purpose counterparts. Repository features and policies may also change over time, so researchers should consult the current terms and technical documentation of the specific service before depositing data. The comparison is based on dimensions discussed in a recent overview of repository choice, including persistence, machine access, metadata, sharing for peer review, usability, and data protection.
 
-: Comparison of selected research repositories {#tbl-repository-choice}
+```{r}
+#| echo: false
+#| tbl-cap: "Comparison of selected research repositories"
+#| label: tbl-repository-choice
+
+repository_table <- tibble::tribble(
+  ~Repository, ~`Main advantages`, ~`Limitations and points to check`,
+  "Zenodo",
+  "DOIs, versioning, API access, and options to restrict access to files.",
+  "No folder hierarchy. Metadata remain publicly accessible even when files are restricted. Changes to published files require a new version.",
+
+  "GitHub",
+  "Code development and collaboration, version history, releases, and API access. Public releases can be archived through Zenodo and assigned a DOI.",
+  "Primarily designed for code development and collaboration rather than long-term data archiving. Zenodo DOI integration requires a public repository.",
+
+  "Open Science Framework (OSF)",
+  "Project collaboration and view-only links for sharing materials during peer review.",
+  "No new projects or components from November 16, 2026; existing projects become read-only on February 19, 2027.",
+
+  "ResearchBox",
+  "Search functionality for data and code, automatically generated codebooks, and a documented API.",
+  "Check whether its preservation arrangements, access options, and file-size limits meet the project's requirements. (API)",
+
+  "Figshare",
+  "DOIs, versioning, API, and support for a wide range of research outputs.",
+  "Storage limits and available features may differ between Figshare.com and institutional Figshare services.",
+
+  "PsychArchives",
+  "Psychology-focused repository that links related research outputs and provides anonymized reviewer links.",
+  "Primarily intended for psychology and related disciplines. Datasets must be anonymized. The standard file-size limit is 1 GB, although larger deposits can be requested. Check API documentation and options for automated access to restricted files.",
+
+  "DataverseNL",
+  "Dataset DOIs, versioning, metadata, access management, and API-based upload.",
+  "Institutional policies and available support may differ.",
+
+  "UK Data Service ReShare",
+  "Social-science repository with review of deposits and open or safeguarded access.",
+  "Deposits must meet the UK Data Service's scope and policies. Access to safeguarded files may require registration or permission."
+)
+
+repository_table |> 
+  flextable() |> 
+  theme_booktabs() |> 
+  width(j = "Repository", width = 1.3) |> 
+  width(j = "Main advantages", width = 2.3) |> 
+  width(j = "Limitations and points to check", width = 3.0) 
+```
 
 The suitability of a repository also depends on whether it supports machine access. Public APIs allow automated systems to retrieve metadata and files without relying on manual interaction with a web interface. ResearchBox now provides a documented API; PsychArchives has an API, although its documentation and programmatic access to some restricted files remain limitations. These features should be checked against the intended use of the shared materials.
 
@@ -104,12 +148,6 @@ Repositories that support anonymous or restricted-access sharing can be particul
 For sharing anonymized data and research materials, Zenodo may be a suitable choice because it provides persistent DOIs, versioning, and options for restricting file access when necessary, including for materials under review or data that cannot be made publicly available. However, restricted access alone does not establish that a repository is appropriate for identifiable or sensitive personal data. Researchers should check applicable institutional, ethical, and data-protection requirements, particularly for pseudonymized data, before depositing it.
 
 When choosing a data repository, therefore, do not simply ask whether it allows you to upload your files. Consider whether its infrastructure supports the level of openness, persistence, accessibility, and machine readability required for the research materials to adhere to FAIR principles.
-
-<!--
-Check the implications of CERN's revised data-protection framework before making a repository-specific legal claim about Zenodo. The following source was identified in February 2026:
-https://home.cern/revision-oc-11-modernised-data-privacy-framework-cern/
-The revised OC 11 is described as aligning CERN's rules more closely with recognized international data-protection practices, including the GDPR. Confirm the implications with an institutional data-protection officer before making a categorical recommendation.
--->
 
 ## 2 Repository content and organization
 
@@ -182,12 +220,6 @@ Metadata can also describe data provenance: how and under what circumstances the
 
 Researchers may also share documentation such as codebooks, preregistration documents, the manuscript, supplementary materials, and README or metadata files. These documents provide context for interpreting and reusing data and code, so identify them clearly in the repository and will be discussed in detail in Section 2.2.4.
 
-```{=html}
-<!-- 
-We could also mention creating a schema for PICOS. This could be of interest for meta-analyses and systematic reviews. Imagine that you can search for papers not only based on the topic, but also across the five dimentions of the PICOS framework. This would facilitate the identification of relevant studies for meta-analyses as well as verification of the study inclusion criteria, or whether all studies included in the meta-analysis are "similar". 
--->
-```
-
 #### 2.1.4 Repository size, packaging, and selective downloads
 
 Online repositories often provide generous storage limits. For example, Zenodo has a standard limit of 100 files and 50 GB per record; additional storage can be allocated ([file limits](https://help.zenodo.org/docs/deposit/manage-files/); [storage quota](https://help.zenodo.org/docs/deposit/manage-quota/)). Large repositories can still make reuse difficult: users may lack the time or storage to download files they do not need, and automated tools may impose limits on the size of individual files or entire repositories. Organise and label files so users can download only the materials relevant to their purpose. For example, someone looking for analysis data should be able to retrieve the data and code without also downloading large video files used as stimuli.
@@ -236,11 +268,7 @@ In addition to repository-level metadata, individual studies can be organized in
 
 Machine-readable data descriptions support findability and reuse, and allow users to search for studies that collected particular types of data. Psych-DS uses Schema.org's Dataset model with additional Psych-DS fields. Structured descriptions can be generated automatically from well-organized repositories when the codebook is accurate and file and folder names are informative.
 
-If a standalone codebook is needed, software packages can assist with its creation [@arslan_how_2019].
-
-A codebook, or data dictionary, describes the contents of data files; the terms are often used interchangeably. @buchanan_getting_2021 note that a codebook traditionally describes survey variables and may be created during data collection, whereas a data dictionary is often created during planning and may also describe the structure of data files. Regardless of the term used, each data file—or each set of files with the same structure—should have an accompanying codebook. Data files should have a single-row header, and the codebook should explain what the column names and values mean. Some formats (e.g., SPSS, Stata, SAS, JASP, jamovi, and Qualtrics) support variable and value labels, allowing some codebook information to be embedded in the data file.
-
-A complete codebook should contain six types of information:
+A codebook, or data dictionary, describes the contents of data files; the terms are often used interchangeably. @buchanan_getting_2021 note that a codebook traditionally describes survey variables and may be created during data collection, whereas a data dictionary is often created during planning and may also describe the structure of data files. Regardless of the term used, each data file—or each set of files with the same structure—should have an accompanying codebook. Data files should have a single-row header, and the codebook should explain what the column names and values mean. Some formats (e.g., SPSS, Stata, SAS, JASP, jamovi, and Qualtrics) support variable and value labels, allowing some codebook information to be embedded in the data file. If a standalone codebook is needed, software packages can assist with its creation [see for example @arslan_how_2019]. A complete codebook should contain six types of information:
 
 1. **Column name:** Use the name exactly as it appears in the data file (e.g., `panas_1`).
 2. **Label:** Provide a plain-language description (e.g., `positive and negative affect schedule item 1`). For variables not derived from survey questions, describe what the values represent, such as reaction times or correct/incorrect responses. If a variable belongs to an established scale, include the scale's full name. At a minimum, provide the column name and label.
@@ -251,18 +279,31 @@ A complete codebook should contain six types of information:
 
 One way to create a codebook is to enter the relevant information in data-analysis software. In SPSS (`.sav`), Stata (`.dta`), SAS (`.sas7bdat`), JASP (`.jasp`), jamovi (`.omv`), and Qualtrics (`.qsf`), variable and value labels can be stored with the data. These formats can therefore combine data and some codebook information in one file, but may not capture every field needed for a complete codebook. For example, not all formats provide fields for documenting missing-value codes or the exact survey-item text, and none provides a dedicated field for coding instructions. Provide a separate codebook when information is missing from the data file.
 
-Psych-DS provides a schema for describing data files and variables in JSON. Codebooks can also be tabular, with a column for each type of information recorded about a variable. An example is provided in @tbl-codebook.
+Psych-DS provides a schema for describing data files and variables in JSON. Codebooks can also be tabular, with a column for each type of information recorded about a variable. An example is provided in @tbl-codebook-example.
 
-| variable-name | label | values | missing-values | question | coding-instructions |
-|------------|------------|------------|------------|------------|------------|
-| `pid` | Participant identifier |  |  |  |  |
-| `age` | Age in years |  | -99 | What is your age in years? |  |
-| `gender` | Self-reported gender | 1 = Man; 2 = Woman; 3 = Non-binary | 99 | Which best describes your gender? |  |
-| `bds_1` | Breakup Distress item 1 | 1 (Strongly disagree) to 5 (Strongly agree) | 99 | I feel overwhelmed by the breakup. |  |
-| `bds_3` | Breakup Distress item 3 | 1 (Strongly disagree) to 5 (Strongly agree) | 99 | I am coping well. | reverse scored: 6 - bds_3 |
-| `bds_mean` | Breakup Distress mean score |  |  |  | mean of bds_1 to bds_10 after reversing bds_3 |
+```{r}
+#| echo: false
+#| label: tbl-codebook-example
+#| tbl-cap: "Example of codebook"
 
-: Example of a codebook {#tbl-codebook}
+codebook <- tibble::tribble(
+  ~`variable-name`, ~label, ~values, ~`missing-values`, ~question, ~`coding-instructions`,
+  "pid", "Participant identifier", "", "", "", "",
+  "age", "Age in years", "", "-99", "What is your age in years?", "",
+  "gender", "Self-reported gender", "1 = Man; 2 = Woman; 3 = Non-binary", "99",
+  "Which best describes your gender?", "",
+  "bds_1", "Breakup Distress item 1", "1 (Strongly disagree) to 5 (Strongly agree)", "99",
+  "I feel overwhelmed by the breakup.", "",
+  "bds_3", "Breakup Distress item 3", "1 (Strongly disagree) to 5 (Strongly agree)", "99",
+  "I am coping well.", "Reverse scored: 6 - bds_3",
+  "bds_mean", "Breakup Distress mean score", "", "", "",
+  "Mean of bds_1 to bds_10 after reversing bds_3"
+)
+
+codebook |> 
+  flextable() |> 
+  width(j = c("values", "question", "coding-instructions"), width = 1.5)
+```
 
 Tabular codebooks can be stored as `.csv` files, but a spreadsheet may be easier to create. Copy the column names from the data file and transpose them (i.e., convert the header row into a column) in the codebook so that names match exactly. Store values as text where needed, because Excel may convert values such as `1-5` into dates such as `5-Jan`.
 
@@ -270,23 +311,23 @@ Store codebooks as `.ods`, `.xlsx`, or `.csv` files. The first two formats are g
 
 ### 2.3 Code
 
-Code files are part of the research record and should be organized so their purpose and relationship to other repository files are clear. These may include scripts, notebooks, and configuration files created or adapted for the project. Brief documentation should identify what each file does and which data or outputs it relates to, helping others understand and reuse the code.
+Code files are part of the research record and should be organized so that their purpose and relationship to other repository files are clear. These may include scripts, notebooks, and configuration files created or adapted for the project. Brief documentation should identify what each file does and which data or outputs it relates to, helping others understand and reuse the code.
+
+When a script contains multiple analyses, results should be organised so that users can identify which analysis produced each output. One approach is to use separate scripts and corresponding output files with consistent naming conventions (e.g., 01_simulation.R and 01_results_simulation.csv), and store the resulting files in the output folder. The execution of these scripts can be automated using the {targets} R package, which tracks dependencies between scripts and functions to determine the order in which they should run. This makes it easier to manage projects with multiple interdependent scripts and ensures that analyses are executed in the correct sequence.
 
 The practice of clearly labeling files in repositories is also important to distinguish links to repositories that contain existing software used in research (e.g., a GitHub link to a software tool created by others that was used to process physiological data) from links to repositories that contain code generated by the researchers themselves for their research (e.g., code for an agent-based model that researchers have created as part of their research).
 
-Computational reproducibility refers to the ability to produce the same outputs from the same data and code inputs [@comprepro_2026]. Computational reproducibility is often threatened by different versions of software, packages or computational settings. To increase computational reproducibility, the software and dependencies required to run the analysis should be clearly specified. For example, R projects can include an renv.lock file and Python projects a requirements.txt or environment.yml file. For analyses that depend on system libraries or software beyond R or Python packages, containerized solutions such as Docker, Nix, or Code Ocean provide stronger guarantees that the computational environment can be reconstructed in the future.
-
-### 2.4 Output
-
-Researchers may also share output files such as statistical results, tables, figures, and simulation results. These files let users inspect research outputs directly. Outputs that can be regenerated from other repository files do not always need to be stored, but sharing them can be useful when they require substantial computation or help users verify reported results.
-
 ```{=html}
-<!-- 
-I wonder if we should also say something about how researchers should store the results of their analyses, unless they use a workflow such as Quarto where results are directly embedded in the rendered document. For example, rather than having an .R file that only produces results in the console, researchers could store key analytical results in objects and save them in a machine-readable format (e.g., .rds). Also, if an .R file contains many different analyses, should we recommend storing the results of each statistical analysis in a separate file? Perhaps this is worth discussing a bit.
+<!--
+I am not sure what to make of the above paragraph. It mentions links to repositories, but this section focuses on code organisation. These would be links to two different projects, so I am not sure how file labelling relates to this distinction. It needs clarification.
 -->
 ```
 
-If an output is shared, place it in the `output` folder and use an informative filename (e.g., `results_simulation.csv`). This helps users identify and download the files they need. Because long-term storage uses space, retain outputs when they substantially reduce the computational burden of generating them or help verify reported results.
+Computational reproducibility refers to the ability to produce the same outputs from the same data and code inputs. However, differences in software versions, package dependcies or computational settings can prevent analyses from being reporduced. To address this, the software and dependencies required to run the analysis should be clearly specified. For example, R projects can include an renv.lock file and Python projects a requirements.txt or environment.yml file. For analyses that depend on system libraries or software beyond R or Python packages, containerized solutions such as Docker, Nix, or Code Ocean provide stronger guarantees that the computational environment can be reconstructed in the future.
+
+### 2.4 Output
+
+Researchers may also share output files such as statistical results, tables, figures, and simulation results. These files allow peers to inspect research outputs directly, without necessarily having to rerun the analyses. These outputs are particularly useful when generating them requires substantial computation or when they help peers verify reported results. In these cases, analytical results should be saved in reusable formats (e.g., .rds or .csv files) rather than being available on the software console. For example, in R, researchers can store key analytical results in objects and save them for later inspection or reuse. Alternatively, when analyses require little computational time, workflows such as Quarto allow analytical results to be embedded directly in rendered documents, reducing the need to store outputs separately.
 
 ### 2.5 Materials
 
@@ -296,20 +337,198 @@ The [Open Scale Definition](https://openscales.net/) (OSD) is a machine-readable
 
 ### 2.6 Licenses
 
-Sharing data and materials is not enough. Each repository should state clearly how its contents may be reused. It is important to check the default license of the chosen repository if a specific license is not selected by the owner of the repository. A single license may not be appropriate for every file type: code generally requires a software-specific license (e.g., MIT or GPL), whereas data and other non-software outputs may be shared under a suitable Creative Commons license or public-domain dedication (e.g., CC BY or CC0). Creative Commons recommends against using its licenses for software because they do not address software-specific issues. Before applying a license, check that you have the rights or permission to license the material, and consider privacy, consent, funder or institutional requirements, and third-party rights. ([Creative Commons FAQ](https://creativecommons.org/faq/); [Choose a License](https://choosealicense.com/non-software/))
+Sharing data and materials is not enough; repositories should also clearly specify the conditions under which their contents may be reused. Adding a license clarifies the permissions granted to others, including whether they may use, share, adapt, distribute, and reproduce the materials in any medium or format. For example, under a Creative Commons Attribution (CC BY) license, these activities are permitted as long as users give appropriate credit to the original author(s) and source, provide a link to the license, and indicate whether changes were made. If the repository owner has not selected a specific license, check the repository's default license. A single license may not be appropriate for every file type: code generally requires a software-specific license (e.g., MIT or GPL), whereas data and other non-software outputs can be shared under a Creative Commons license or public-domain dedication (e.g., CC BY or CC0). Creative Commons recommends against using its licenses for software because they do not address software-specific issues (see [documentation] (https://creativecommons.org/faq/#can-i-apply-a-creative-commons-license-to-software)). Before applying a license, ensure that you have the rights or permission to license the material, and consider privacy, consent, funder or institutional requirements, and third-party rights. The [Choose a License] (https://choosealicense.com/non-software/) website offers guidance to help researchers select an appropiate license for research outputs.
 
-Include the license text in a clearly named `LICENSE` file at the repository root. GitHub allows to include a license in the repository and automatically creates the file and file text based on the chosen license. If different parts of the repository have different licenses, use separate license files or state clearly in the README and repository metadata which license applies to which content. Check the repository's default license before depositing files: Zenodo, for example, defaults to CC BY 4.0 for a record and allows mixed licenses to be declared, such as MIT for software and CC BY for documentation. ([Zenodo: Licenses and rights](https://help.zenodo.org/docs/deposit/describe-records/licenses/); [GitHub: Licensing a repository](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/licensing-a-repository))
+Include the full license text in a clearly named `LICENSE` file at the repository root. GitHub allows you to add a license when creating a repository and automatically generates the corresponding file and file text based on the chosen license. If different parts of the repository have different licenses, use separate license files or state clearly in the README and repository metadata which license applies to each type of content. Also check the repository's default license before depositing files: for example, Zenodo defaults to CC BY 4.0 for records and allows different licenses to be declared for different files, such as MIT for software and CC BY for documentation. For more information, see the [Zenodo documentation] (https://help.zenodo.org/docs/deposit/describe-records/licenses/) on licenses and rights and [GitHub's guidance] (https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/licensing-a-repository) on licensing a repository.
 
-## 3 How to check for FAIRness of a Repository
+## 3 Automatic assessment of FAIR data and code
 
-One solution to overcome the challenges of implementing all these recommendations and training of researcher is to automate the generation and validation of FAIR data and code as much as possible. Software could scan a repository and assist researchers in iteratively improving its FAIRness. Metacheck (https://github.com/scienceverse/metacheck) is one implementation of this approach: it scans a repository, classifies files, retrieves information from data files and codebooks, and can assist in creating metadata files. Input from researchers remains essential for information that cannot be inferred automatically, but manual inputs should only be required where needed.
+We have discussed more than 100 recommendations that researchers can follow to make their repositories machine-readable. However, researchers may not have the necessary expertise, knowledge or time to learn and implement all these recommendations. Furthermore, given the large number of recommendations, it is unrealistic to expect researchers to remember and consistently apply them all. One solution is to help researchers ensure their data and code is as FAIR as possible using automation. Metacheck [@metacheck-package] is an open-source R package that has dedicated modules to help researchers iteratively improve the FAIRness of their repositories, including data and code.
 
+Researchers can use Metacheck either by providing a manuscript containing a link to a repository or by uploading a repository folder directly. Broadly speaking, three modules are designed to automatically check whether repositories follow many of the recommendations discussed in this work: `repo_check`, `data_check` and `code_check`. For a detailed discussion on how Metacheck can be used to assess FAIR data and code practices across a corpus of articles, including an evaluation of the accuracy of these modules see [CITATION].
+
+```{r}
+#| eval: FALSE
+#| echo: FALSE
+
+# For illustrative purposes, we download a repository corresponding to faicticious paper. 
+# The repository contains several related to the FAIR principles.
+
+download.file(
+  "https://github.com/Lakens/stroop_effect_paper_bad/archive/refs/heads/main.zip",
+  destfile = "bad_repo.zip",
+  mode = "wb"
+)
+
+# Unzip the file
+unzip("bad_repo.zip", exdir = "bad_repo")
+
+# Remove the _extensions folder to prevent its contents from being included in the `repo_module` report
+unlink(
+  "bad_repo/stroop_effect_paper_bad-main/_extensions",
+  recursive = TRUE
+)
+```
+
+```{r}
+#| echo: false
+
+# Generate a report using `repo_check`, `code_check`, `data_check` and `codebook_check`
+res <- report_repository(
+  "bad_repo/stroop_effect_paper_bad-main",
+  output_file = "bad_repo/bad_repo_report.html"
+  )
+```
+
+
+The `repo_check` module identifies links to repositories in manuscripts, examines their contents, and performs checks on the repository structure and its files. One of its outputs is a table listing all files identified in the repository, including their names, file types and paths (Table @tbl-repo-files).
+
+```{r}
+#| echo: FALSE
+#| label: tbl-repo-files
+#| tbl-cap: "Files identified in the repository by the `repo_check` module."
+
+res$repo_check$table |> 
+  select(
+    Name = file_name, 
+    Type = file_type, 
+    Path = file_path
+    ) |> 
+  flextable() |> 
+  width(j = c("Name", "Path"), width = 1)
+```
+
+All Metacheck modules use a traffic-light system to indicate potential problems. For `repo_check`, warnings relate to the repository level and may include missing README files, files that do not belong to the repository, or issues with file naming. Running the module on the example repository produces the following traffic-light output:
+
+```{r}
+#| echo: false
+light <- res$repo_check$traffic_light
+```
+
+> `r light`
+
+A red light signals that issues have been identified and must be addressed. In addition to the traffic-light system, the module provides a summary of its findings. For example, when applied to the example repository, the module returns the following summary: 
+
+```{r}
+#| echo: false
+#| include: false
+
+res$repo_check
+```
+
+> -  We found 7 files in 1 repository.
+> -  We found 1 README file and 0 repositories without READMEs.
+> -  We left out 1 file that does not belong in a repository: operating system (1). Remove it from the repository.
+
+The summary indicates that the repository contains an unnecessary file that should be removed. The repo_check module also provides a table listing files that may need to be removed, including their paths, type, and severity (Table @tbl-unnecessary-files):
+
+```{r}
+#| echo: FALSE
+#| label: tbl-unnecessary-files
+#| tbl-cap: "Unnecessary files identified in the repository by the `repo_check` module."
+
+res$repo_check$useless_files |> 
+  select(
+    Path = file_path,
+    Kind = kind,
+    Severity = severity
+  ) |> 
+    flextable()
+```
+
+In this example, a DS_Store file is identified. This is a macOS system file that stores folder-specific settings and is not relevant to the research project. It should therefore be removed from the repository.
+
+The `data_check` module examines the files in a research repository to identify those containing data, such as spreadsheets and CSV files. For each data file it can read, the module provides an overview of its columns, including their names and data types, and checks for potential issues, such as entirely empty columns or inconsistencies in how categorical values are recorded. Running the module on the repository example, returns the following summary:
+
+```{r}
+#| echo: FALSE
+#| include: FALSE
+res$data_check
+```
+
+> -  We classified 7 files: 1 data, 1 code, 5 documentation.
+> -  We found 1 tabular data file and extracted 9 columns from 1 of them.
+> -  We grouped the files into 1 study group (ex1), plus 1 collection-level file (README/ro-crate metadata). We ran 
+> automated data-quality checks on 9 columns; 5 columns have at least one potential issue (1 column with inconsistent 
+> category casing; 1 column with no observed values (entirely empty); 1 column with numeric values stored as text; 1 column > whose name suggests personal information; 1 column whose values look like personal information; 1 column holding an SPSS > "Select Cases" filter (analyses may have used only a subset of rows)). We detected demographic columns for Age, Gender.
+
+The module identified 5 columns might have at least one potential issue. These include inconsistent capitalisation of categorical values, an entirely empty column, numeric values stored as text, a column whose name suggests it may contain personal information, a column whose values appear to contain personal information, and a column containing an SPSS "Select Cases" filter, which may indicate that analyses were performed on only a subset of the rows.
+
+The module also provides a summary of the potential issues identified, including the affected file, column, type of check, and details of the finding (Table @tbl-data-findings).
+
+```{r}
+#| echo: FALSE
+#| label: tbl-data-findings
+#| tbl-cap: "Potential issues identified in the repository by the `data_check` module."
+
+res$data_check$findings |> 
+  select(
+    Name = source_file,
+    Column = column,
+    Check = check,
+    Detail = detail
+  ) |> 
+    flextable() |> 
+    width(j = "Check", width = 2) |> 
+    width(j = "Detail", width = 3)
+```
+
+The `code_check` module examines the code files linked to a paper and identifies common issues that may prevent the code from running elsewhere. These include hard-coded file paths pointing to the author's computer, missing comments explaining analytical steps, and references to packages that are not explicitly loaded in the script. These checks help identify potential barriers to computational reproducibility. RunninG the module returns the following summary:
+
+```{r}
+#| echo: FALSE
+#| include: FALSE
+res$code_check
+```
+
+> -  We found 1 R, 0 Python, 0 SAS, 0 SPSS, 0 Stata, 0 Mplus, 0 MATLAB, and 0 JASP code file.
+> -  1 code file (analysis.qmd) had no comments.
+> -  setwd() calls were found.
+> -  All libraries/imports were loaded in one block.
+> -  No pinned R/package environment (renv.lock, sessionInfo(), or groundhog/checkpoint) was found. Consider adding a 
+> solution to improve computational reproducibility.
+
+The module identified three potential issues with the analysis code. These include the absence of comments in the analysis.qmd file, the use of setwd() to set the working directory, and the absence of a pinned R/package environment (e.g., renv.lock). The latter makes it more difficult to reconstruct the software environment required to run the analysis.
+
+The `codebook_check` module uses the results from data_check to examine whether each data column is described in an accompanying codebook. Columns with a corresponding description are labelled, whereas those without a description are classified as unlabelled. This helps identify variables that require further documentation to make datasets easier to understand and reuse. The example repository contains a codebook file with descriptions of the dataset variables (Table @tbl-codebook), shown below:
+
+```{r}
+#| echo: FALSE
+#| label: tbl-codebook
+#| tbl-cap: "Variables described in `codebook.csv`."
+
+res$codebook_check$codebook_vars |> 
+  select(
+    Variables = codebook_variable,
+    Label = label,
+    Source = codebook_source
+  ) |> 
+    flextable() |> 
+    width(j = c("Variables", "Source"), width = 1) |> 
+    width(j = "Label", width = 2.5) 
+```
+
+Running the module returns the following summary:
+
+```{r}
+#| echo: false
+#| include: false
+
+res$codebook_check
+```
+
+> -  We parsed 2 variable definitions from codebook/README files.
+> -  2 of 9 data columns (22%) are documented in a codebook; 7 are not.
+
+The module correctly identifies the seven data columns that are not documented in the codebook, highlighting where additional variable descriptions are needed.
+
+Together, these modules illustrate how Metacheck can help researchers identify potential issues that hinder the FAIRness of research data and code, supporting efforts to make their repositories and their contents machine-readable.
 
 ## Discussion
 
-Data and code should be shared where possible to facilitate verification, reproducibility and reuse. Repositories containing FAIR data and code should allow machines to find and access all content. This requires data and code to be made available in online repositories that can feasibly be downloaded; files and folders to be clearly named and organized in a consistent folder structure to allow automatic classification and identification of relationships between files; the repository contents to be described using machine-readable metadata; files to be shared in open and machine-readable formats; a codebook to be included included; data files to be well-structured; and, where relevant, metadata about measures and tasks to be provided. Schemas such as Psych-DS, RO-Crate JSON-LD, DDI-Lifecycle, CRediT, Open Scales Definition, and Behaverse Data Model [@defossez_structure_2020] can facilitate FAIR data and code.
+Data and code should be shared as FAIR as possible to facilitate verification, reproducibility and reuse. Repositories containing FAIR data and code should enable machines to find and access all content. Achieving this requires several practices: data and code should be made available in online repositories from which they can be downloaded; files and folders should have clear names and be organized in a consistent folder structure that facilitates their automatic classification and identification of relationships between files; repository contents should be described using machine-readable metadata; files should be shared in open, machine-readable formats; codebooks should be included; data files should be well-structured; and, where relevant, metadata describing measures and tasks should be provided. The use of schemas such as Psych-DS, RO-Crate JSON-LD, DDI-Lifecycle, CRediT, Open Scales Definition, and Behaverse Data Model [@defossez_structure_2020] can facilitate FAIR data and code.
 
-Adhering to best practices for FAIR data and code is complex and effortful. This document contains more than 100 recommendations and it is unreasonable to expect researchers or data managers to remember and implement them all. It becomes essential to assist researchers in the FAIRification of their research outputs with automated tools, such as the previously described Metacheck (https://github.com/scienceverse/metacheck). However, checking that metadata follow a schema cannot establish that their contents are accurate or complete. Researchers must still verify, for example, that units are correct, processing steps are adequately described, and a codebook reflects the shared dataset. Guidance on scientific code review similarly emphasises the value of informed human examination alongside technical checks [@ivimeycook_review_2023; @rokem_review_2024; @hillemann_review_2025].
+Adhering to best practices for FAIR data and code is complex and effortful. This document contains more than 100 recommendations and it is unrealistic to expect researchers and data managers to remember implement them all. It becomes essential to assist researchers in the FAIRification of their research outputs with automated tools, such as Metacheck [@metacheck-package]. However, automated checks of whether metadata follow a particular schema cannot establish whether their contents are accurate or complete. Researchers must still verify, for example, that units are correct, processing steps are adequately described, and a codebook reflects the shared dataset. Guidance on scientific code review similarly emphasises the value of informed human examination alongside technical checks [@ivimeycook_review_2023; @rokem_review_2024; @hillemann_review_2025].
 
 The potential of machine-readable data and code extends beyond individual repositories. If data repositories can be scanned automatically, information about their contents could be processed automatically, and stored in a central database. Researchers could then search for data files containing particular scales or tasks while filtering by characteristics of the sample such as demographic information. This could greatly facilitate the reuse of research data. Machine-readable code and data could also make automated reproducibility checks possible increasing the quality of scientific manuscripts, without increasing the burden on peer reviewers. More broadly, machine-readable repositories could help researchers demonstrate adherence to research-integrity requirements to FAIR data and code when possible. They could also allow universities, funders, and other research organizations to automatically check whether shared research outputs meet relevant data-sharing requirements.
 
